@@ -14,7 +14,7 @@ const moreHrefs = ['/projets', '/socials'];
 const primaryLinks = links.filter((l) => !moreHrefs.includes(l.href));
 const moreLinks = links.filter((l) => moreHrefs.includes(l.href));
 
-const current = new URL(Astro.request.url).pathname;
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const moreActive = moreLinks.some((l) => l.href === current);
 ---
 
