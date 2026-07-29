@@ -1,0 +1,190 @@
+---
+import { Menu, X, PawPrint, ChevronDown } from '@lucide/astro';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/projets', label: 'Projets' },
+  { href: '/socials', label: 'Socials' },
+];
+
+const moreHrefs = ['/projets', '/socials'];
+const primaryLinks = links.filter((l) => !moreHrefs.includes(l.href));
+const moreLinks = links.filter((l) => moreHrefs.includes(l.href));
+
+const current = new URL(Astro.request.url).pathname;
+const moreActive = moreLinks.some((l) => l.href === current);
+---
+
+<header class="navbar relative sticky top-0 z-50 border-b-2 border-[var(--accent)] bg-[#0a0a0a]/95 backdrop-blur">
+  <nav class="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 font-bold text-white tracking-wide">
+      {/*}<PawPrint size={20} class="text-[var(--accent)]" />*/}
+      Mars
+    </a>
+
+    {/* Desktop links */}
+    <ul class="hidden sm:flex items-center gap-8">
+      {primaryLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            aria-current={current === link.href ? 'page' : undefined}
+            class:list={[
+              'text-[13px] font-bold tracking-widest uppercase transition-colors',
+              current === link.href ? 'text-[var(--accent)]' : 'text-[#888] hover:text-white',
+            ]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+
+      <li class="relative">
+        <button
+          type="button"
+          class:list={[
+            'more-toggle inline-flex items-center gap-1 text-[13px] font-bold tracking-widest uppercase transition-colors',
+            moreActive ? 'text-[var(--accent)]' : 'text-[#888] hover:text-white',
+          ]}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          More
+          <ChevronDown size={14} class="more-chevron transition-transform duration-200" />
+        </button>
+
+        <ul class="more-menu hidden absolute right-0 top-full mt-3 w-44 flex-col border-2 border-[var(--accent)] bg-[#0a0a0a] py-2 shadow-[0_4px_0_var(--accent-shadow)]">
+          {moreLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={current === link.href ? 'page' : undefined}
+                class:list={[
+                  'block px-4 py-2 text-[13px] font-bold tracking-widest uppercase transition-colors',
+                  current === link.href ? 'text-[var(--accent)]' : 'text-[#888] hover:text-white',
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </li>
+    </ul>
+
+    {/* Mobile toggle */}
+    <button
+      type="button"
+      class="nav-toggle sm:hidden relative inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--accent)] text-white transition-transform duration-150 active:scale-90"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span class="relative w-5 h-5">
+        <Menu size={20} class="icon-open absolute inset-0 transition-all duration-200" />
+        <X size={20} class="icon-close absolute inset-0 transition-all duration-200 opacity-0 scale-50 rotate-45" />
+      </span>
+    </button>
+  </nav>
+
+  {/* Mobile menu */}
+  <div class="mobile-menu-wrapper sm:hidden absolute left-0 right-0 top-full grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr;">
+    <div class="overflow-hidden">
+      <ul id="mobile-menu" class="flex flex-col border-t-2 border-b-2 border-[var(--accent)] bg-[#0a0a0a] px-6 py-2 gap-0.5 shadow-[0_4px_0_var(--accent-shadow)]">
+        {links.map((link, i) => (
+          <li class="menu-item opacity-0 -translate-x-2 transition-all duration-200 ease-out" style={`transition-delay: ${i * 40}ms`}>
+            <a
+              href={link.href}
+              aria-current={current === link.href ? 'page' : undefined}
+              class:list={[
+                'block py-2.5 text-[13px] font-bold tracking-widest uppercase transition-colors',
+                current === link.href ? 'text-[var(--accent)]' : 'text-[#888] hover:text-white',
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  function setupNavbar() {
+    const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+    const wrapper = document.querySelector<HTMLElement>('.mobile-menu-wrapper');
+    const menu = document.querySelector<HTMLElement>('#mobile-menu');
+    if (!toggle || !wrapper || !menu || toggle.dataset.bound) return;
+    toggle.dataset.bound = 'true';
+
+    const iconOpen = toggle.querySelector<HTMLElement>('.icon-open');
+    const iconClose = toggle.querySelector<HTMLElement>('.icon-close');
+    const items = menu.querySelectorAll<HTMLElement>('.menu-item');
+
+    function setOpen(open: boolean) {
+      wrapper!.style.gridTemplateRows = open ? '1fr' : '0fr';
+      toggle!.setAttribute('aria-expanded', String(open));
+
+      iconOpen?.classList.toggle('opacity-0', open);
+      iconOpen?.classList.toggle('scale-50', open);
+      iconOpen?.classList.toggle('-rotate-45', open);
+      iconClose?.classList.toggle('opacity-0', !open);
+      iconClose?.classList.toggle('scale-50', !open);
+      iconClose?.classList.toggle('rotate-45', !open);
+
+      items.forEach((item) => {
+        item.classList.toggle('opacity-0', !open);
+        item.classList.toggle('-translate-x-2', !open);
+      });
+    }
+
+    toggle.addEventListener('click', () => {
+      setOpen(wrapper!.style.gridTemplateRows !== '1fr');
+    });
+
+    menu.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => setOpen(false));
+    });
+  }
+
+  function setupMoreDropdown() {
+    const trigger = document.querySelector<HTMLButtonElement>('.more-toggle');
+    const menu = document.querySelector<HTMLElement>('.more-menu');
+    const chevron = document.querySelector<HTMLElement>('.more-chevron');
+    if (!trigger || !menu || trigger.dataset.bound) return;
+    trigger.dataset.bound = 'true';
+
+    function setOpen(open: boolean) {
+      menu!.classList.toggle('hidden', !open);
+      menu!.classList.toggle('flex', open);
+      trigger!.setAttribute('aria-expanded', String(open));
+      chevron?.classList.toggle('rotate-180', open);
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOpen(menu!.classList.contains('hidden'));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menu!.classList.contains('hidden') && !menu!.contains(e.target as Node) && e.target !== trigger) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+
+  setupNavbar();
+  setupMoreDropdown();
+  document.addEventListener('astro:after-swap', () => {
+    setupNavbar();
+    setupMoreDropdown();
+  });
+</script>

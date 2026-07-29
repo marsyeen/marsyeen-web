@@ -1,3 +1,17 @@
+---
+import '../styles/global.css'
+import Navbar from '../components/Navbar.astro'
+import StarBackground from '../components/StarBackground.astro'
+import Loader from '../components/Loader.astro'
+import { ClientRouter } from 'astro:transitions'
+
+import orbitron400 from '@fontsource/orbitron/files/orbitron-latin-400-normal.woff2?url'
+import orbitron600 from '@fontsource/orbitron/files/orbitron-latin-600-normal.woff2?url'
+import orbitron700 from '@fontsource/orbitron/files/orbitron-latin-700-normal.woff2?url'
+
+const { title } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -5,19 +19,24 @@
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
+		<link rel="preload" as="font" type="font/woff2" href={orbitron400} crossorigin />
+		<link rel="preload" as="font" type="font/woff2" href={orbitron600} crossorigin />
+		<link rel="preload" as="font" type="font/woff2" href={orbitron700} crossorigin />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
+		<ClientRouter />
 	</head>
-	<body>
+	<body class="min-h-screen flex flex-col text-white">
+		<Loader />
+		<StarBackground />
+		<Navbar/>
 		<slot />
+
+		<script>
+			import { initTheme } from '../lib/theme';
+
+			initTheme();
+			document.addEventListener('astro:after-swap', initTheme);
+		</script>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

@@ -1,0 +1,112 @@
+---
+const quips = [
+  "bark bark bark? wait...",
+  "probably at a con",
+  "hyena noises",
+  "do not feed",
+  "wifi seeker 📡",
+  "spotted irl: rare",
+  "certified menace",
+  "biting is love",
+];
+---
+
+<div
+  class="profile-avatar relative w-40 h-40 mb-5 mx-auto"
+  style="perspective:600px;"
+>
+  <div
+    class="speech-bubble absolute -top-10 left-[70%] z-20
+      bg-[#0f0f0f] border-2 border-[var(--accent)]
+      shadow-[4px_4px_0_var(--accent-shadow)]
+      px-3 py-1.5 text-[11px] font-bold tracking-wide text-white whitespace-nowrap"
+  >
+    <span class="quip"></span>
+
+    <span
+      class="absolute -bottom-[8px] left-4 w-0 h-0"
+      style="
+        border-left:6px solid transparent;
+        border-right:6px solid transparent;
+        border-top:7px solid var(--accent);"
+    ></span>
+
+    <span
+      class="absolute -bottom-[4px] left-4 w-0 h-0"
+      style="
+        border-left:6px solid transparent;
+        border-right:6px solid transparent;
+        border-top:7px solid #0f0f0f;"
+    ></span>
+  </div>
+
+  <div
+    class="avatar w-full h-full rounded-full border-4 border-[var(--accent)] overflow-hidden"
+    style="box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.5);"
+  >
+    <div class="avatar-inner w-full h-full">
+      <img
+        src="/imgs/pfp.png"
+        alt="Mars Fursona"
+        class="w-full h-full object-contain rounded-full"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ quips }}>
+  const avatar = document.querySelector(".profile-avatar");
+  const bubble = avatar.querySelector(".speech-bubble");
+  const quip = avatar.querySelector(".quip");
+
+  bubble.style.display = "none";
+
+  avatar.addEventListener("mouseenter", () => {
+    quip.textContent = quips[Math.floor(Math.random() * quips.length)];
+
+    bubble.style.display = "block";
+
+    requestAnimationFrame(() => {
+      bubble.classList.add("show");
+      avatar.classList.add("hovered");
+    });
+  });
+
+  avatar.addEventListener("mouseleave", () => {
+    bubble.classList.remove("show");
+    avatar.classList.remove("hovered");
+
+    setTimeout(() => {
+      if (!avatar.classList.contains("hovered")) {
+        bubble.style.display = "none";
+      }
+    }, 200);
+  });
+</script>
+
+<style>
+.profile-avatar .avatar {
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1);
+  transform-style: preserve-3d;
+}
+
+.profile-avatar.hovered .avatar {
+  transform: rotateX(8deg) rotateY(8deg) scale(0.94);
+}
+
+.speech-bubble {
+  opacity: 0;
+  transform: translateY(8px) scale(.9) rotateX(8deg) rotateY(8deg);
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+  pointer-events: none;
+}
+
+.speech-bubble.show {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(8deg) rotateY(8deg);
+}
+</style>

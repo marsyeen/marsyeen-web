@@ -1,0 +1,97 @@
+---
+interface Props {
+  src: string;
+  eyebrow: string;
+  subtitle: string;
+  accent?: string;
+  shadow?: string;
+}
+
+const { src, eyebrow, subtitle, accent = "var(--accent)", shadow = "var(--accent-shadow)" } = Astro.props;
+---
+
+<div
+  class="hero-banner relative overflow-hidden border-b-2"
+  style={`border-color:${accent}; box-shadow:0 4px 0 ${shadow};`}
+>
+  <img
+    src={src}
+    alt=""
+    class="hero-banner-img absolute inset-0 w-full h-full object-cover object-center"
+  />
+
+  <div class="hero-banner-overlay absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-[#0f0f0f]" />
+
+  <div class="relative z-10 max-w-6xl mx-auto px-6 lg:px-8 pt-32 pb-24">
+    <p
+      class="hero-banner-eyebrow text-[10px] font-bold tracking-[0.25em] uppercase mb-4"
+      style={`color:${accent}`}
+    >
+      {eyebrow}
+    </p>
+
+    <h1 class="hero-banner-title text-6xl sm:text-7xl font-bold text-white leading-none mb-5">
+      <slot />
+    </h1>
+
+    <div
+      class="hero-banner-bar w-16 h-[3px] mb-6"
+      style={`background-color:${accent}; box-shadow:2px 2px 0 ${shadow}; transform-origin:left;`}
+    />
+
+    <p class="hero-banner-subtitle text-[#aaa] text-lg max-w-xl leading-relaxed">
+      {subtitle}
+    </p>
+  </div>
+</div>
+
+<style>
+  .hero-banner-img {
+    transform: scale(1.08);
+    animation: heroZoomOut 1.4s ease-out forwards;
+  }
+
+  .hero-banner-overlay {
+    opacity: 0;
+    animation: heroFadeIn 0.6s ease-out forwards;
+  }
+
+  .hero-banner-eyebrow {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: heroFadeUp 0.5s ease-out 0.25s forwards;
+  }
+
+  .hero-banner-title {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: heroFadeUp 0.5s ease-out 0.4s forwards;
+  }
+
+  .hero-banner-bar {
+    transform: scaleX(0);
+    animation: heroScaleX 0.35s ease-out 0.58s forwards;
+  }
+
+  .hero-banner-subtitle {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: heroFadeUp 0.5s ease-out 0.65s forwards;
+  }
+
+  @keyframes heroZoomOut {
+    to { transform: scale(1); }
+  }
+
+  @keyframes heroFadeIn {
+    to { opacity: 1; }
+  }
+
+  @keyframes heroFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes heroScaleX {
+    to { transform: scaleX(1); }
+  }
+</style>

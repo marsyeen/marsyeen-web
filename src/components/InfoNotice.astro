@@ -1,0 +1,19 @@
+---
+import { Info } from '@lucide/astro';
+
+interface Props {
+  title?: string;
+}
+
+const { title = "INFO" } = Astro.props;
+---
+
+<div class="flex items-start gap-3 border-2 border-[#3b82f6] bg-[#0a0f1a] p-5">
+  <Info size={20} class="text-[#3b82f6] flex-shrink-0 mt-0.5" />
+  <div>
+    <p class="text-[12px] font-bold tracking-widest uppercase text-[#3b82f6] mb-1">{title}</p>
+    <p class="text-[#aaa] text-[14px] leading-relaxed">
+      <slot />
+    </p>
+  </div>
+</div>

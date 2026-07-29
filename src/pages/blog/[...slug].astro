@@ -1,0 +1,197 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { CalendarDays, Clock, ArrowLeft, Tag } from '@lucide/astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? !data.draft : true);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const wordCount = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const readingMinutes = Math.max(1, Math.round(wordCount / 200));
+---
+
+<Layout title={`${post.data.title} — Blog`}>
+  <main class="flex-1 relative z-10">
+    <div class="max-w-3xl mx-auto px-6 lg:px-8 pt-32 pb-20">
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-[#777] hover:text-[var(--accent)] transition-colors mb-10"
+      >
+        <ArrowLeft size={14} />
+        Back to Blog
+      </a>
+
+      <h1 class="text-4xl sm:text-5xl font-bold text-white leading-tight mb-5">
+        {post.data.title}
+      </h1>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] font-mono tracking-widest uppercase text-[#666] mb-6">
+        <span class="flex items-center gap-2">
+          <CalendarDays size={13} />
+          <time datetime={post.data.pubDate.toISOString()}>{dateFormatter.format(post.data.pubDate)}</time>
+        </span>
+        {post.data.updatedDate && (
+          <span class="text-[#555]">
+            Updated {dateFormatter.format(post.data.updatedDate)}
+          </span>
+        )}
+        <span class="flex items-center gap-2">
+          <Clock size={13} />
+          {readingMinutes} min read
+        </span>
+      </div>
+
+      {post.data.tags.length > 0 && (
+        <div class="flex flex-wrap items-center gap-2 mb-10">
+          <Tag size={12} class="text-[#555]" />
+          {post.data.tags.map((tag) => (
+            <span class="text-[10px] font-bold tracking-widest uppercase text-[#777] border border-[#333] px-2 py-1">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div class="w-full h-px bg-[#333] mb-10" />
+
+      <article class="prose">
+        <Content />
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .prose :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose :global(h3) {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(p) {
+    color: #aaa;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose :global(a:hover) {
+    color: white;
+  }
+
+  .prose :global(strong) {
+    color: white;
+    font-weight: 700;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.25rem;
+    color: #aaa;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .prose :global(ul) {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .prose :global(ul li) {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(ul li::before) {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent);
+  }
+
+  .prose :global(ol) {
+    list-style: decimal;
+  }
+
+  .prose :global(ol li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(ol li::marker) {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--accent);
+    padding-left: 1.25rem;
+    color: #888;
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+
+  .prose :global(code) {
+    font-family: monospace;
+    font-size: 0.85em;
+    color: var(--accent);
+    background: #151515;
+    border: 1px solid #333;
+    padding: 0.15em 0.4em;
+  }
+
+  .prose :global(pre) {
+    background: #0a0a0a;
+    border: 2px solid #333;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #ddd;
+  }
+
+  .prose :global(img) {
+    border: 2px solid #333;
+    margin: 1.5rem 0;
+  }
+
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 2.5rem 0;
+  }
+</style>

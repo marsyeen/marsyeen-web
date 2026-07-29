@@ -1,0 +1,37 @@
+---
+---
+
+<div
+  id="page-loader"
+  class="fixed inset-0 z-[999] flex items-center justify-center bg-[#0a0a0a] transition-opacity duration-300"
+  transition:persist
+>
+  <div class="w-10 h-10 rounded-full border-4 border-[#333] border-t-[var(--accent)] animate-spin"></div>
+</div>
+
+<style>
+  #page-loader.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  // Shown only for the very first page load (fonts/assets settling in).
+  // The element is transition:persist'd and stays hidden for the rest of
+  // the session — nav clicks swap prefetched pages instantly and shouldn't
+  // re-trigger it.
+  function setupLoader() {
+    const loader = document.getElementById('page-loader');
+    if (!loader || loader.dataset.bound) return;
+    loader.dataset.bound = 'true';
+
+    if (document.readyState === 'complete') {
+      loader.classList.add('hide');
+    } else {
+      window.addEventListener('load', () => loader.classList.add('hide'), { once: true });
+    }
+  }
+
+  setupLoader();
+</script>

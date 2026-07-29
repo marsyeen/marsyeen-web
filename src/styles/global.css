@@ -1,0 +1,24 @@
+@import "@fontsource/orbitron/400.css";
+@import "@fontsource/orbitron/600.css";
+@import "@fontsource/orbitron/700.css";
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Orbitron", sans-serif;
+
+  /* Or create a custom utility class like `font-orbitron` */
+  --font-orbitron: "Orbitron", sans-serif;
+}
+
+:root {
+  /* Site-wide brand accent — swapped between Mars (orange) and Lynix (purple)
+     by src/lib/theme.ts, persisted in localStorage. */
+  --accent: #ff6b1a;
+  --accent-shadow: #7a3200;
+  --accent-rgb: 255, 107, 26;
+}
+
+body {
+    @apply bg-neutral-900
+}

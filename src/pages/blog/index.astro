@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBanner from '../../components/HeroBanner.astro';
+import { getCollection } from 'astro:content';
+import { CalendarDays, Tag } from '@lucide/astro';
+import InfoNotice from '../../components/InfoNotice.astro';
+
+const posts = (await getCollection('blog', ({ data }) => import.meta.env.PROD ? !data.draft : true))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Layout title="Blog">
+  <main class="flex-1 relative z-10">
+    <HeroBanner
+      src="/imgs/pfp.png"
+      eyebrow="Field Notes"
+      subtitle="Con recaps, photography breakdowns, and whatever else is rattling around in my head this week."
+    >
+      Blog
+    </HeroBanner>
+
+    <div class="max-w-4xl mx-auto px-6 lg:px-8 py-20">
+      {posts.length === 0 ? (
+        <InfoNotice title="No posts yet">
+          Check back soon!
+        </InfoNotice>
+      ) : (
+        <div class="flex flex-col gap-4">
+          {posts.map((post) => (
+            <a
+              href={`/blog/${post.id}/`}
+              class="group block border-2 border-[#333] bg-[#0a0a0a] p-6 sm:p-8
+                hover:border-[var(--accent)] hover:shadow-[4px_4px_0_var(--accent-shadow)] transition-all"
+            >
+              <div class="flex items-center gap-2 text-[11px] font-mono tracking-widest uppercase text-[#666] mb-3">
+                <CalendarDays size={13} />
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {dateFormatter.format(post.data.pubDate)}
+                </time>
+              </div>
+
+              <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-[var(--accent)] transition-colors">
+                {post.data.title}
+              </h2>
+
+              <p class="text-[#aaa] text-[15px] leading-relaxed mb-4">
+                {post.data.description}
+              </p>
+
+              {post.data.tags.length > 0 && (
+                <div class="flex flex-wrap items-center gap-2">
+                  <Tag size={12} class="text-[#555]" />
+                  {post.data.tags.map((tag) => (
+                    <span class="text-[10px] font-bold tracking-widest uppercase text-[#777] border border-[#333] px-2 py-1 group-hover:border-[var(--accent)] group-hover:text-[var(--accent)] transition-colors">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>
