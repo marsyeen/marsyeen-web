@@ -1,21 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import { MessagesSquare, ExternalLink } from '@lucide/astro';
+import { MessagesSquare, ExternalLink, Camera, ShieldCheck, Code, PawPrint } from '@lucide/astro';
 
 const interests = [
   {
-    icon: "📷",
+    icon: Camera,
     title: "Photography",
     desc: "Capturing moments at cons, on trails, and everywhere the adventure takes me.",
   },
   {
-    icon: "🔐",
+    icon: ShieldCheck,
     title: "Cybersecurity / IT",
     desc: "Digging into systems, finding the gaps, and keeping things locked down.",
   },
   {
-    icon: "💻",
+    icon: Code,
     title: "Programming",
     desc: "Building fun projects, automating the boring stuff, and always learning new tech.",
   },
@@ -29,7 +29,7 @@ const characters = [
     shadow: "#7a3200",
     kicker: "The hyena himself",
     headingPrefix: "Greetings! I'm ",
-    image: "/imgs/pfp.png",
+    image: "/imgs/about-pfp.jpg",
     bio: [
       "I'm Mars, a spotted hyena from Ontario, Canada. I'm passionate about photography, cybersecurity and adventuring to new places. I'm pretty much always on the move, hitting up as many furry conventions or sidequests as I can manage.",
       "The biggest highlight lately? FWA 2026 — where I finally made the jump to my first-ever fullbody suit. Catch me at a con? Definitely don't be a stranger.",
@@ -42,13 +42,15 @@ const characters = [
       { label: "Suit Type", value: "Fullbody" },
       { label: "Built by", value: "Pawie Paws" },
       { label: "Origin", value: "Mexico" },
-      { label: "NetTuffs Compatible", value: "Yes" },
-      { label: "NetTuffs Version", value: "3.1" },
     ],
     suit: {
       kicker: "The Suit",
       heading: "Meet Mars in the Fur",
       sub: "Mars is quite a character — here's what makes him tick.",
+      photos: {
+        main: "/imgs/about-suit.jpg",
+        thumbs: ["/imgs/about-suit-1.jpg", "/imgs/about-suit-2.jpg", "/imgs/about-suit-3.jpg"],
+      },
     },
     palette: [
       { label: "Primary Fur", hex: "#c9a06c" },
@@ -76,11 +78,11 @@ const characters = [
     shadow: "#3b0764",
     kicker: "The purple side of me",
     headingPrefix: "Meet ",
-    image: null,
+    image: "/imgs/events.jpg",
     bio: [
       "Lynix is my other fursona — a purple anthropomorphic space wolf, drifting between star systems and conventions right alongside Mars. Sharp-eyed, a little mischievous, and impossible to miss in a crowd thanks to that unmistakable violet fur.",
     ],
-    cta: { label: "Visit Lynix.ca", href: "https://lynix.ca", icon: "external", external: true },
+    cta: { label: "Get in touch", href: "/socials", icon: "message", external: false },
     stats: [
       { label: "Name", value: "Lynix" },
       { label: "Species", value: "Wolf" },
@@ -91,6 +93,10 @@ const characters = [
       kicker: "The Fit",
       heading: "Lynix's Ref Photos",
       sub: "Suit and reference shots — added as they're ready.",
+      photos: {
+        main: "/imgs/bark.jpg",
+        thumbs: ["/imgs/train-arriving.jpg", "/imgs/banner3.jpg", "/imgs/test.jpg"],
+      },
     },
     palette: [
       { label: "Primary Fur", hex: "#a855f7" },
@@ -130,10 +136,10 @@ const characters = [
         <p class="text-[#777] text-sm mb-8 mt-1">The things that keep me busy, no matter whose fur I'm in.</p>
 
         <div class="grid sm:grid-cols-3 gap-4">
-          {interests.map(({ icon, title, desc }) => (
+          {interests.map(({ icon: Icon, title, desc }) => (
             <div class="border-2 border-[#333] bg-[#0a0a0a] p-6
               hover:border-[var(--accent)] hover:shadow-[4px_4px_0_var(--accent-shadow)] transition-all group">
-              <div class="text-2xl mb-4">{icon}</div>
+              <div class="text-[var(--accent)] mb-4"><Icon size={28} /></div>
               <h3 class="text-[11px] font-bold tracking-widest uppercase text-[var(--accent)] mb-2 group-hover:text-white transition-colors">
                 {title}
               </h3>
@@ -207,7 +213,7 @@ const characters = [
                 <img
                   src={c.image}
                   alt={`${c.name} Profile`}
-                  class="relative w-[380px] h-[380px] max-w-full object-contain border-2 border-[var(--accent)]
+                  class="relative w-[380px] h-[380px] max-w-full object-cover object-center border-2 border-[var(--accent)]
                     shadow-[8px_8px_0_var(--shadow)] rotate-2 hover:rotate-0 transition-transform duration-300 bg-[#0a0a0a]"
                 />
               ) : (
@@ -242,13 +248,25 @@ const characters = [
               <div>
                 <div class="relative aspect-[4/3] border-2 border-[var(--accent)] shadow-[4px_4px_0_var(--shadow)]
                   overflow-hidden mb-3 flex items-center justify-center bg-[#151515]">
-                  <span class="text-[#555] text-[11px] font-mono tracking-widest uppercase">Photo coming soon</span>
+                  {c.suit.photos ? (
+                    <img
+                      src={c.suit.photos.main}
+                      alt={`${c.name} fursuit`}
+                      class="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span class="text-[#555] text-[11px] font-mono tracking-widest uppercase">Photo coming soon</span>
+                  )}
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                  {[0, 1, 2].map(() => (
+                  {(c.suit.photos?.thumbs ?? [null, null, null]).map((thumb) => (
                     <div class="relative aspect-square border border-[#333] overflow-hidden
                       hover:border-[var(--accent)] transition-colors flex items-center justify-center bg-[#151515]">
-                      <span class="text-[#444] text-lg">🐾</span>
+                      {thumb ? (
+                        <img src={thumb} alt={`${c.name} fursuit detail`} class="w-full h-full object-cover" />
+                      ) : (
+                        <PawPrint class="text-[#444]" size={20} />
+                      )}
                     </div>
                   ))}
                 </div>
