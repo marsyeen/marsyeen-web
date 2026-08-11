@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import { Globe, Images, ShieldCheck, Camera, ArrowRight } from '@lucide/astro';
+
+const statusStyles: Record<string, string> = {
+  Live: 'text-[#4ade80] border-[#4ade80]/40',
+  Ongoing: 'text-[var(--accent)] border-[var(--accent)]/40',
+  'In Progress': 'text-[#facc15] border-[#facc15]/40',
+};
+
+const projects = [
+  {
+    icon: Globe,
+    title: 'marsyeen.com',
+    status: 'Live',
+    tags: ['Astro', 'Tailwind CSS', 'TypeScript'],
+    desc: 'The den itself — a personal site built from scratch with Astro.',
+    cta: { label: 'Back to Mars', href: '/' },
+  },
+  /*{
+    icon: Images,
+    title: 'Gallery Lightbox',
+    status: 'Live',
+    tags: ['Astro', 'TypeScript', 'Image Optimization'],
+    desc: 'A folder-based gallery that walks nested image directories at build time, generates optimized thumbnails and full-size webp exports, and pairs them with a keyboard-friendly lightbox.',
+    cta: { label: 'View Gallery', href: '/gallery' },
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Homelab Hardening',
+    status: 'Ongoing',
+    tags: ['Docker', 'Networking', 'Security'],
+    desc: 'Default-deny firewall rules, a real reverse proxy in front of every public-facing service, and log shipping that actually gets read on a schedule — an ongoing project after finding one forgotten open port too many.',
+    cta: { label: 'Read the Writeup', href: '/blog/homelab-hardening-notes' },
+  },
+  {
+    icon: Camera,
+    title: 'Con Photo Culling Script',
+    status: 'In Progress',
+    tags: ['Python', 'Automation'],
+    desc: 'A small batch tool for the same-night cull-and-export workflow — sorting through hundreds of con frames fast enough to post the best one before breakfast.',
+    cta: null,
+  },*/
+];
+---
+
+<Layout title="Projets">
+  <main class="flex-1 relative z-10">
+    <HeroBanner
+      src="/imgs/banner3.jpg"
+      eyebrow="Built & Tinkered"
+      subtitle="Things I've built, broken, and rebuilt — spanning this site, the homelab, and whatever side project has my attention this month."
+    >
+      Projets
+    </HeroBanner>
+
+    <div class="max-w-6xl mx-auto px-6 lg:px-8 py-20">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {projects.map(({ icon: Icon, title, status, tags, desc, cta }) => (
+          <div
+            class="group flex flex-col border-2 border-[#333] bg-[#0a0a0a] p-7 sm:p-8
+              hover:border-[var(--accent)] hover:shadow-[4px_4px_0_var(--accent-shadow)] transition-all"
+          >
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="w-10 h-10 flex items-center justify-center border-2 border-[#333] group-hover:border-[var(--accent)] transition-colors">
+                <Icon size={18} class="text-[var(--accent)]" />
+              </div>
+              <span
+                class:list={[
+                  'text-[10px] font-bold tracking-widest uppercase border px-2 py-1',
+                  statusStyles[status] ?? 'text-[#777] border-[#333]',
+                ]}
+              >
+                {status}
+              </span>
+            </div>
+
+            <h2 class="text-xl font-bold text-white mb-2">{title}</h2>
+            <p class="text-[#aaa] text-[14px] leading-relaxed mb-4 flex-1">{desc}</p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              {tags.map((tag) => (
+                <span class="text-[10px] font-bold tracking-widest uppercase text-[#777] border border-[#333] px-2 py-1">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {cta && (
+              <a
+                href={cta.href}
+                class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-[var(--accent)] hover:text-white transition-colors"
+              >
+                {cta.label}
+                <ArrowRight size={14} class="transition-transform group-hover:translate-x-1" />
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+</Layout>

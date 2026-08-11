@@ -1,0 +1,92 @@
+---
+import Welcome from '../components/Welcome.astro';
+import Layout from '../layouts/Layout.astro';
+import ProfileAvatar from '../components/ProfileAvatar.astro';
+import { MessagesSquare, PawPrint } from '@lucide/astro';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+<main class="flex-1 flex flex-col justify-center items-center">
+      <div class="flex-1 flex flex-col max-w-5xl items-center justify-center relative text-center z-10 px-4">
+
+        {/* Avatar */}
+        <div><ProfileAvatar /></div>
+
+
+        {/* Heading — fades in */}
+        <h1 class="anim-fade relative text-4xl font-bold mt-5 min-h-[2.5rem]" style="animation-delay: 0.15s">
+          Hey I'm Mars!
+        </h1>
+
+        {/* Description — fades in after heading */}
+        <p class="anim-fade relative max-w-2xl mt-5" style="animation-delay: 0.35s">
+          Spotted hyena. Photographer. Cyber nerd. Always on the move — catch me at a con or somewhere I probably shouldn't be.
+        </p>
+
+        {/* Buttons — fade in staggered, after the text finishes resolving */}
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+          <div class="anim-button" style="animation-delay: 0.6s">
+            <a
+              href="/socials"
+              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                bg-[var(--accent)] text-black border-[var(--accent-shadow)]
+                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
+                hover:translate-x-0.5 hover:translate-y-0.5
+                active:shadow-none active:translate-x-1 active:translate-y-1"
+            >
+              <MessagesSquare size={20} />
+              Contact Me
+            </a>
+          </div>
+          <div class="anim-button" style="animation-delay: 0.75s">
+            <a
+              href="/about"
+              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                bg-transparent text-white border-[var(--accent)]
+                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
+                hover:translate-x-0.5 hover:translate-y-0.5
+                active:shadow-none active:translate-x-1 active:translate-y-1"
+            >
+              <PawPrint size={20} />
+              My Fursona
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Small Version Text at the bottom right */}
+      <p class="text-[11px] text-[#888] mt-8 fixed bottom-2 right-4 z-10">
+        <strong>v2.1.1</strong>
+      </p>
+    </main>
+</Layout>
+
+<style>
+  .anim-fade {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .anim-button {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
