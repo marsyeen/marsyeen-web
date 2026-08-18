@@ -1,174 +1,92 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { ShieldAlert, RefreshCw, Terminal, ArrowLeft } from "@lucide/astro";
+import Welcome from '../components/Welcome.astro';
+import Layout from '../layouts/Layout.astro';
+import ProfileAvatar from '../components/ProfileAvatar.astro';
+import { MessagesSquare, PawPrint } from '@lucide/astro';
 
-// Optional: Change these to fit your update's ETA or scope
-const statusDetails = {
-    systemState: "SYSTEM MAINTENANCE IN PROGRESS",
-    reason: "Upgrading core systems and adding new photos.",
-    estimatedTime: "2-3 Days",
-    version: "v3.1.8-alpha",
-};
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout title="Maintenance | Down for Upgrades">
-    <main
-        class="flex-1 min-h-screen relative z-10 flex items-center justify-center py-16 px-6"
-    >
-        <!-- Cyber Grid Background Glow -->
-        <div
-            class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,107,26,0.12)_0%,transparent_70%)]"
-        >
-        </div>
+<Layout>
+<main class="flex-1 flex flex-col justify-center items-center">
+      <div class="flex-1 flex flex-col max-w-5xl items-center justify-center relative text-center z-10 px-4">
 
-        <div class="max-w-2xl w-full mx-auto relative">
-            <!-- Main Brutalist Box -->
-            <div
-                class="border-2 border-[var(--accent,#ff6b1a)] bg-[#0a0a0a] p-8 sm:p-12 shadow-[8px_8px_0_var(--accent-shadow,#7a3200)] relative overflow-hidden"
+        {/* Avatar */}
+        <div><ProfileAvatar /></div>
+
+
+        {/* Heading — fades in */}
+        <h1 class="anim-fade relative text-4xl font-bold mt-5 min-h-[2.5rem]" style="animation-delay: 0.15s">
+          Hey I'm Mars!
+        </h1>
+
+        {/* Description — fades in after heading */}
+        <p class="anim-fade relative max-w-2xl mt-5" style="animation-delay: 0.35s">
+          Spotted hyena. Photographer. Cyber nerd. Always on the move — catch me at a con or somewhere I probably shouldn't be.
+        </p>
+
+        {/* Buttons — fade in staggered, after the text finishes resolving */}
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+          <div class="anim-button" style="animation-delay: 0.6s">
+            <a
+              href="/socials"
+              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                bg-[var(--accent)] text-black border-[var(--accent-shadow)]
+                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
+                hover:translate-x-0.5 hover:translate-y-0.5
+                active:shadow-none active:translate-x-1 active:translate-y-1"
             >
-                <!-- Corner Decorative Cut -->
-                <div
-                    class="absolute top-0 right-0 w-0 h-0 border-t-[50px] border-t-[var(--accent,#ff6b1a)] border-l-[50px] border-l-transparent"
-                >
-                </div>
-
-                <!-- Header -->
-                <div
-                    class="flex items-center gap-3 text-[var(--accent,#ff6b1a)] mb-4"
-                >
-                    <ShieldAlert size={36} />
-                    <p
-                        class="text-[12px] font-bold tracking-[0.25em] uppercase"
-                    >
-                        Maintenance Mode
-                    </p>
-                </div>
-
-                <h1
-                    class="text-4xl sm:text-5xl font-bold text-white mb-2 tracking-tight"
-                >
-                    Pardon the <span class="text-[var(--accent,#ff6b1a)]"
-                        >Static</span
-                    >
-                </h1>
-
-                <div class="w-12 h-[3px] bg-[var(--accent,#ff6b1a)] mb-6 mt-2">
-                </div>
-
-                <p class="text-[#aaa] text-[15px] leading-relaxed mb-8">
-                    {statusDetails.reason} Check back shortly, we’ll have the den
-                    back online and operational soon.
-                </p>
-
-                <!-- Live Terminal/Glitch Panel -->
-                <div
-                    class="border border-[#333] bg-[#050505] p-4 mb-8 font-mono text-[12px]"
-                >
-                    <div
-                        class="flex items-center gap-2 text-[#666] border-b border-[#222] pb-2 mb-3"
-                    >
-                        <Terminal size={14} />
-                        <span>system_status.log</span>
-                    </div>
-
-                    <p class="text-[#888] mb-1">
-                        &gt; <span class="text-[var(--accent,#ff6b1a)]"
-                            >STATE:</span
-                        >
-                        {statusDetails.systemState}
-                    </p>
-                    <p class="text-[#888] mb-1">
-                        &gt; <span class="text-[var(--accent,#ff6b1a)]"
-                            >EST. ETA:</span
-                        >
-                        {statusDetails.estimatedTime}
-                    </p>
-                    <p class="text-[#888]">
-                        &gt; <span
-                            class="glitch-text text-[var(--accent,#ff6b1a)]"
-                            data-text="[RECONFIGURING_SECTOR_33_DATA_STREAMS...]"
-                            >[RECONFIGURING_SECTOR_33_DATA_STREAMS...]</span
-                        >
-                    </p>
-                </div>
-
-                <!-- Action / Controls -->
-                <div
-                    class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
-                >
-                    <button
-                        type="button"
-                        onclick="window.location.reload()"
-                        class="inline-flex items-center justify-center gap-2 font-bold py-3 px-6 border-2
-              bg-[var(--accent,#ff6b1a)] text-black border-[var(--accent-shadow,#7a3200)]
-              shadow-[4px_4px_0_var(--accent-shadow,#7a3200)] hover:shadow-[2px_2px_0_var(--accent-shadow,#7a3200)]
-              hover:translate-x-0.5 hover:translate-y-0.5
-              active:shadow-none active:translate-x-1 active:translate-y-1
-              transition-all duration-100 text-[13px] tracking-widest uppercase cursor-pointer"
-                    >
-                        <RefreshCw size={16} />
-                        Check Again
-                    </button>
-                </div>
-            </div>
+              <MessagesSquare size={20} />
+              Contact Me
+            </a>
+          </div>
+          <div class="anim-button" style="animation-delay: 0.75s">
+            <a
+              href="/about"
+              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                bg-transparent text-white border-[var(--accent)]
+                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
+                hover:translate-x-0.5 hover:translate-y-0.5
+                active:shadow-none active:translate-x-1 active:translate-y-1"
+            >
+              <PawPrint size={20} />
+              My Fursona
+            </a>
+          </div>
         </div>
+
+      </div>
+
+      {/* Small Version Text at the bottom right */}
+      <p class="text-[11px] text-[#888] mt-8 fixed bottom-2 right-4 z-10">
+        <strong>v2.1.1</strong>
+      </p>
     </main>
 </Layout>
 
-<script>
-    import { getStoredTheme } from "../lib/theme";
+<style>
+  .anim-fade {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
 
-    // Re-use your glitch text effect
-    const GLITCH_CHARS = "!@#$%^&*<>?/\\|[]{}~`ABCDEFabcdef0123456789";
+  .anim-button {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s ease-out forwards;
+  }
 
-    function scramble(text: string, tick: number) {
-        return text
-            .split("")
-            .map((ch) => {
-                if (ch === " ") return " ";
-                const glitchChance = tick % 6 === 0 ? 0.8 : 0.2;
-                return Math.random() < glitchChance
-                    ? GLITCH_CHARS[
-                          Math.floor(Math.random() * GLITCH_CHARS.length)
-                      ]
-                    : ch;
-            })
-            .join("");
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
     }
+  }
 
-    function setupGlitchText() {
-        document.querySelectorAll<HTMLElement>(".glitch-text").forEach((el) => {
-            if (el.dataset.glitchBound) return;
-            el.dataset.glitchBound = "true";
-
-            const text = el.dataset.text ?? el.textContent ?? "";
-            let tick = 0;
-            setInterval(() => {
-                tick++;
-                el.textContent = scramble(text, tick);
-            }, 90);
-        });
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    // Apply stored theme (Mars orange or Lynix purple)
-    function applyTheme() {
-        const activeTheme = getStoredTheme();
-        const isLynix = activeTheme === "lynix";
-
-        document.documentElement.style.setProperty(
-            "--accent",
-            isLynix ? "#a855f7" : "#ff6b1a",
-        );
-        document.documentElement.style.setProperty(
-            "--accent-shadow",
-            isLynix ? "#3b0764" : "#7a3200",
-        );
-    }
-
-    setupGlitchText();
-    applyTheme();
-    document.addEventListener("astro:after-swap", () => {
-        setupGlitchText();
-        applyTheme();
-    });
-</script>
+  }
+</style>
