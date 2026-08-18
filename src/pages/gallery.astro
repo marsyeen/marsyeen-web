@@ -1,0 +1,499 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import { getImage } from 'astro:assets';
+import { Folder, ChevronLeft, ChevronRight, X } from '@lucide/astro';
+import InfoNotice from '../components/InfoNotice.astro';
+
+type ImageLeaf = {
+  type: 'image';
+  name: string;
+  alt: string;
+  thumb: { src: string; w: number; h: number };
+  full: { src: string; w: number; h: number };
+};
+
+type FolderNode = {
+  type: 'folder';
+  name: string;
+  folders: FolderNode[];
+  images: ImageLeaf[];
+};
+
+async function buildTree(
+  id: string,
+  name: string,
+  modules: Record<string, { default: ImageMetadata }>
+): Promise<FolderNode> {
+  const root: FolderNode = { type: 'folder', name, folders: [], images: [] };
+  const prefix = `/src/assets/gallery/${id}/`;
+  const entries = Object.entries(modules).sort(([a], [b]) => a.localeCompare(b));
+
+  for (const [path, mod] of entries) {
+    const rel = path.startsWith(prefix) ? path.slice(prefix.length) : path;
+    const segments = rel.split('/');
+    const fileName = segments.pop() as string;
+
+    let cursor = root;
+    for (const seg of segments) {
+      let next = cursor.folders.find((f) => f.name === seg);
+      if (!next) {
+        next = { type: 'folder', name: seg, folders: [], images: [] };
+        cursor.folders.push(next);
+      }
+      cursor = next;
+    }
+
+    const thumb = await getImage({ src: mod.default, width: 480, height: 480, fit: 'cover', format: 'webp' });
+    const full = await getImage({ src: mod.default, width: 1800, format: 'webp' });
+
+    cursor.images.push({
+      type: 'image',
+      name: fileName,
+      alt: fileName.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+      thumb: { src: thumb.src, w: Number(thumb.attributes.width), h: Number(thumb.attributes.height) },
+      full: { src: full.src, w: Number(full.attributes.width), h: Number(full.attributes.height) },
+    });
+  }
+
+  (function sortTree(node: FolderNode) {
+    node.folders.sort((a, b) => a.name.localeCompare(b.name));
+    node.folders.forEach(sortTree);
+  })(root);
+
+  return root;
+}
+
+const marsModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/gallery/mars/**/*.{jpeg,jpg,png,webp,avif,gif}',
+  { eager: true }
+);
+const lynixModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/gallery/lynix/**/*.{jpeg,jpg,png,webp,avif,gif}',
+  { eager: true }
+);
+
+const folders = [
+  {
+    id: 'mars',
+    name: 'Mars',
+    accent: '#ff6b1a',
+    shadow: '#7a3200',
+    tagline: 'Fursuit shots, photography, and art of the hyena himself.',
+    tree: await buildTree('mars', 'Mars', marsModules),
+  },
+  {
+    id: 'lynix',
+    name: 'Lynix',
+    accent: '#a855f7',
+    shadow: '#3b0764',
+    tagline: 'Art and reference shots of the purple space wolf.',
+    tree: await buildTree('lynix', 'Lynix', lynixModules),
+  },
+];
+
+// Embedded for the client-side browser script. `<` is escaped so no filename
+// can accidentally close out of the <script type="application/json"> tag.
+const galleryData = JSON.stringify(
+  folders.map(({ id, name, accent, shadow, tree }) => ({ id, name, accent, shadow, tree }))
+).replace(/</g, '\\u003c');
+---
+
+<Layout title="Gallery">
+  <main class="flex-1 relative z-10">
+    <HeroBanner
+      src="/imgs/bark.jpg"
+      eyebrow="The Den's Art Wall"
+      subtitle="Artwork and photography of both sonas, sorted into folders. Drop new pieces in — subfolders and all — and they show up automatically."
+    >
+      Gallery
+    </HeroBanner>
+
+    {/* ── Folder switcher (full-bleed, 50/50 split) ── */}
+    <div class="w-full grid grid-cols-2 p-5" role="tablist" aria-label="Gallery folders">
+      {folders.map((f, i) => (
+        <button
+          type="button"
+          role="tab"
+          data-tab-btn={f.id}
+          aria-selected={i === 0 ? "true" : "false"}
+          style={`--accent:${f.accent};--shadow:${f.shadow}`}
+          class:list={[
+            "tab-btn w-full flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[14px] py-5 border-2 border-[var(--accent)] transition-all duration-100",
+            i === 0
+              ? "bg-[var(--accent)] text-black shadow-[inset_0_-4px_0_var(--shadow)]"
+              : "bg-transparent text-[var(--accent)]",
+          ]}
+        >
+          <Folder size={16} />
+          {f.name}
+        </button>
+      ))}
+    </div>
+
+    <div id="gallery-root" class="max-w-6xl mx-auto px-6 lg:px-8 py-20">
+      <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">Folder</p>
+
+      {/* Breadcrumb */}
+      <div id="gallery-breadcrumb" class="flex items-center flex-wrap gap-2 text-[15px] font-bold mb-8"></div>
+
+      {/* Grid (folders + images, populated client-side) */}
+      <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+
+      {/* Empty state */}
+      <div id="gallery-empty" class="hidden">
+        <InfoNotice title="This folder is empty">
+          <span id="gallery-empty-hint"></span>
+        </InfoNotice>
+      </div>
+
+      {/* Pagination */}
+      <div id="gallery-pagination" class="hidden items-center justify-center gap-3 mt-10"></div>
+    </div>
+
+    {/* Lightbox — native <dialog>, rendered in the browser's top-layer so it's
+        always above everything else regardless of ancestor stacking context. */}
+    <dialog id="lightbox" class="lightbox-dialog m-auto p-0 max-w-[92vw] max-h-[92vh] bg-transparent">
+      <div class="relative border-2 border-[var(--accent)] bg-[#0a0a0a] shadow-[8px_8px_0_var(--accent-shadow)] p-3 sm:p-5 flex flex-col items-center gap-4">
+        <button
+          type="button"
+          id="lightbox-close"
+          aria-label="Close"
+          class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 w-9 h-9 flex items-center justify-center border-2 border-[var(--accent)] bg-[#0a0a0a] text-white hover:bg-[var(--accent)] hover:text-black transition-colors"
+        >
+          <X size={18} />
+        </button>
+        <button
+          type="button"
+          id="lightbox-prev"
+          aria-label="Previous image"
+          class="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-[var(--accent)] bg-[#0a0a0a] text-white hover:bg-[var(--accent)] hover:text-black transition-colors"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          type="button"
+          id="lightbox-next"
+          aria-label="Next image"
+          class="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-[var(--accent)] bg-[#0a0a0a] text-white hover:bg-[var(--accent)] hover:text-black transition-colors"
+        >
+          <ChevronRight size={20} />
+        </button>
+        <img
+          id="lightbox-img"
+          src=""
+          alt=""
+          class="block w-auto h-auto max-w-[75vw] max-h-[65vh] object-contain"
+        />
+        <figcaption id="lightbox-caption" class="text-[#aaa] text-[11px] sm:text-[12px] font-mono tracking-wide text-center px-10"></figcaption>
+      </div>
+    </dialog>
+  </main>
+
+  <script is:inline type="application/json" id="gallery-data" set:html={galleryData} />
+</Layout>
+
+<style>
+  .lightbox-dialog {
+    border: none;
+  }
+
+  .lightbox-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.9);
+  }
+</style>
+
+<script>
+  import { getStoredTheme, setStoredTheme, type ThemeId } from "../lib/theme";
+
+  type ImageLeaf = {
+    type: "image";
+    name: string;
+    alt: string;
+    thumb: { src: string; w: number; h: number };
+    full: { src: string; w: number; h: number };
+  };
+
+  type FolderNode = {
+    type: "folder";
+    name: string;
+    folders: FolderNode[];
+    images: ImageLeaf[];
+  };
+
+  type CharacterFolder = {
+    id: string;
+    name: string;
+    accent: string;
+    shadow: string;
+    tree: FolderNode;
+  };
+
+  const PAGE_SIZE = 24;
+
+  function setupGallery() {
+    const root = document.getElementById("gallery-root");
+    if (!root || root.dataset.bound) return;
+    root.dataset.bound = "true";
+
+    const dataEl = document.getElementById("gallery-data");
+    const characters: CharacterFolder[] = dataEl ? JSON.parse(dataEl.textContent || "[]") : [];
+    if (characters.length === 0) return;
+
+    const tabButtons = document.querySelectorAll<HTMLButtonElement>("[data-tab-btn]");
+    const breadcrumbEl = document.getElementById("gallery-breadcrumb")!;
+    const gridEl = document.getElementById("gallery-grid")!;
+    const emptyEl = document.getElementById("gallery-empty")!;
+    const emptyHintEl = document.getElementById("gallery-empty-hint")!;
+    const paginationEl = document.getElementById("gallery-pagination")!;
+
+    const lightbox = document.getElementById("lightbox") as HTMLDialogElement;
+    const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const lightboxCaption = document.getElementById("lightbox-caption")!;
+    const lightboxClose = document.getElementById("lightbox-close")!;
+    const lightboxPrev = document.getElementById("lightbox-prev")!;
+    const lightboxNext = document.getElementById("lightbox-next")!;
+
+    let activeId: string = getStoredTheme();
+    let path: string[] = [];
+    let page = 0;
+    let currentImages: ImageLeaf[] = [];
+    let lightboxIndex = 0;
+
+    function getCharacter(id: string) {
+      return characters.find((c) => c.id === id) ?? characters[0];
+    }
+
+    function getNode(character: CharacterFolder, segments: string[]): FolderNode {
+      let node = character.tree;
+      for (const seg of segments) {
+        const next = node.folders.find((f) => f.name === seg);
+        if (!next) break;
+        node = next;
+      }
+      return node;
+    }
+
+    function syncTabButtons() {
+      tabButtons.forEach((btn) => {
+        const isActive = btn.dataset.tabBtn === activeId;
+        btn.classList.toggle("bg-[var(--accent)]", isActive);
+        btn.classList.toggle("text-black", isActive);
+        btn.classList.toggle("shadow-[inset_0_-4px_0_var(--shadow)]", isActive);
+        btn.classList.toggle("bg-transparent", !isActive);
+        btn.classList.toggle("text-[var(--accent)]", !isActive);
+        btn.setAttribute("aria-selected", String(isActive));
+      });
+    }
+
+    function renderBreadcrumb(character: CharacterFolder) {
+      breadcrumbEl.innerHTML = "";
+      const crumbs = [character.name, ...path];
+      crumbs.forEach((label, i) => {
+        if (i > 0) {
+          const sep = document.createElement("span");
+          sep.textContent = "/";
+          sep.className = "text-[#444]";
+          breadcrumbEl.appendChild(sep);
+        }
+        const isLast = i === crumbs.length - 1;
+        if (isLast) {
+          const span = document.createElement("span");
+          span.textContent = label;
+          span.className = "text-[var(--accent)]";
+          breadcrumbEl.appendChild(span);
+        } else {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.className = "text-[#777] hover:text-white transition-colors cursor-pointer";
+          btn.addEventListener("click", () => {
+            path = path.slice(0, i);
+            page = 0;
+            render();
+          });
+          breadcrumbEl.appendChild(btn);
+        }
+      });
+    }
+
+    function render() {
+      const character = getCharacter(activeId);
+      const node = getNode(character, path);
+      renderBreadcrumb(character);
+
+      currentImages = node.images;
+
+      type GridItem =
+        | { kind: "folder"; folder: FolderNode }
+        | { kind: "image"; image: ImageLeaf; imageIndex: number };
+
+      const items: GridItem[] = [
+        ...node.folders.map((folder): GridItem => ({ kind: "folder", folder })),
+        ...node.images.map((image, imageIndex): GridItem => ({ kind: "image", image, imageIndex })),
+      ];
+
+      const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+      page = Math.min(page, totalPages - 1);
+      const pageItems = items.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
+      gridEl.innerHTML = "";
+
+      if (items.length === 0) {
+        gridEl.classList.add("hidden");
+        emptyEl.classList.remove("hidden");
+        emptyHintEl.textContent = `No artwork/photos here yet — check back soon for new ${character.name} content.`;
+      } else {
+        gridEl.classList.remove("hidden");
+        emptyEl.classList.add("hidden");
+
+        pageItems.forEach((item) => {
+          if (item.kind === "folder") {
+            const folder = item.folder;
+            const count = folder.folders.length + folder.images.length;
+            const tile = document.createElement("button");
+            tile.type = "button";
+            tile.className =
+              "folder-tile flex flex-col items-center justify-center gap-2 aspect-square border-2 border-[var(--accent)] bg-[#0a0a0a] hover:shadow-[4px_4px_0_var(--accent-shadow)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all p-4 text-center";
+            tile.innerHTML =
+              '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>';
+            const nameEl = document.createElement("span");
+            nameEl.className = "text-white text-[12px] font-bold break-all";
+            nameEl.textContent = folder.name;
+            const countEl = document.createElement("span");
+            countEl.className = "text-[#777] text-[10px] font-mono";
+            countEl.textContent = `${count} item${count === 1 ? "" : "s"}`;
+            tile.append(nameEl, countEl);
+            tile.addEventListener("click", () => {
+              path = [...path, folder.name];
+              page = 0;
+              render();
+            });
+            gridEl.appendChild(tile);
+          } else {
+            const image = item.image;
+            const tile = document.createElement("button");
+            tile.type = "button";
+            tile.setAttribute("aria-label", `Open ${image.alt}`);
+            tile.className = "relative aspect-square border-2 border-[var(--accent)] overflow-hidden group";
+            const img = document.createElement("img");
+            img.src = image.thumb.src;
+            img.width = image.thumb.w;
+            img.height = image.thumb.h;
+            img.alt = image.alt;
+            img.loading = "lazy";
+            img.decoding = "async";
+            img.className = "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300";
+            tile.appendChild(img);
+            tile.addEventListener("click", () => openLightbox(item.imageIndex));
+            gridEl.appendChild(tile);
+          }
+        });
+      }
+
+      if (totalPages > 1) {
+        paginationEl.classList.remove("hidden");
+        paginationEl.classList.add("flex");
+        paginationEl.innerHTML = "";
+
+        const pagerBtnClass =
+          "px-4 py-2 border-2 border-[var(--accent)] text-[var(--accent)] text-[11px] font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:bg-[var(--accent)] hover:enabled:text-black transition-colors";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.textContent = "Prev";
+        prevBtn.className = pagerBtnClass;
+        prevBtn.disabled = page === 0;
+        prevBtn.addEventListener("click", () => {
+          page -= 1;
+          render();
+        });
+
+        const label = document.createElement("span");
+        label.textContent = `Page ${page + 1} / ${totalPages}`;
+        label.className = "text-[#777] text-[11px] font-mono tracking-widest px-2";
+
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.textContent = "Next";
+        nextBtn.className = pagerBtnClass;
+        nextBtn.disabled = page >= totalPages - 1;
+        nextBtn.addEventListener("click", () => {
+          page += 1;
+          render();
+        });
+
+        paginationEl.append(prevBtn, label, nextBtn);
+      } else {
+        paginationEl.classList.add("hidden");
+        paginationEl.classList.remove("flex");
+      }
+    }
+
+    function openLightbox(index: number) {
+      if (currentImages.length === 0) return;
+      lightboxIndex = index;
+      updateLightbox();
+      if (!lightbox.open) lightbox.showModal();
+    }
+
+    function closeLightbox() {
+      if (lightbox.open) lightbox.close();
+    }
+
+    function updateLightbox() {
+      const image = currentImages[lightboxIndex];
+      if (!image) return;
+      lightboxImg.src = image.full.src;
+      lightboxImg.width = image.full.w;
+      lightboxImg.height = image.full.h;
+      lightboxImg.alt = image.alt;
+      lightboxCaption.textContent = `${image.alt} — ${lightboxIndex + 1} / ${currentImages.length}`;
+    }
+
+    function showPrev() {
+      if (currentImages.length === 0) return;
+      lightboxIndex = (lightboxIndex - 1 + currentImages.length) % currentImages.length;
+      updateLightbox();
+    }
+
+    function showNext() {
+      if (currentImages.length === 0) return;
+      lightboxIndex = (lightboxIndex + 1) % currentImages.length;
+      updateLightbox();
+    }
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightboxPrev.addEventListener("click", showPrev);
+    lightboxNext.addEventListener("click", showNext);
+    // Clicking the ::backdrop registers e.target as the <dialog> itself.
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    // Escape is handled natively by <dialog>; only arrow-key nav needed here.
+    document.addEventListener("keydown", (e) => {
+      if (!lightbox.open) return;
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
+    });
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.tabBtn;
+        if (!id || id === activeId) return;
+        activeId = id;
+        path = [];
+        page = 0;
+        syncTabButtons();
+        if (id === "mars" || id === "lynix") setStoredTheme(id as ThemeId);
+        render();
+      });
+    });
+
+    syncTabButtons();
+    render();
+  }
+
+  setupGallery();
+  document.addEventListener("astro:after-swap", setupGallery);
+</script>
