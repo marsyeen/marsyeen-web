@@ -9,7 +9,12 @@ import orbitron400 from '@fontsource/orbitron/files/orbitron-latin-400-normal.wo
 import orbitron600 from '@fontsource/orbitron/files/orbitron-latin-600-normal.woff2?url'
 import orbitron700 from '@fontsource/orbitron/files/orbitron-latin-700-normal.woff2?url'
 
-const { title } = Astro.props;
+interface Props {
+	title?: string;
+	transparentNav?: boolean;
+}
+
+const { title, transparentNav = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,7 +34,7 @@ const { title } = Astro.props;
 	<body class="min-h-screen flex flex-col text-white">
 		<Loader />
 		<StarBackground />
-		<Navbar/>
+		<Navbar transparent={transparentNav} />
 		<slot />
 
 		<script>

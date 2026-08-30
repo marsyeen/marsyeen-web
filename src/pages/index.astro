@@ -1,92 +1,148 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-import ProfileAvatar from '../components/ProfileAvatar.astro';
-import { MessagesSquare, PawPrint } from '@lucide/astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import ProfileAvatar from "../components/ProfileAvatar.astro";
+import { MessagesSquare, PawPrint } from "@lucide/astro";
 ---
 
-<Layout>
-<main class="flex-1 flex flex-col justify-center items-center">
-      <div class="flex-1 flex flex-col max-w-5xl items-center justify-center relative text-center z-10 px-4">
+<Layout transparentNav>
+    <main
+        class="relative min-h-[calc(100vh-4rem-2px)] flex flex-col justify-end overflow-hidden"
+    >
+        {
+            /* Full-bleed background image — fixed so it fills the navbar area too */
+        }
+        <img
+            src="/bg.jpg"
+            alt=""
+            class="hero-img fixed inset-0 -z-10 w-full h-full object-cover object-center"
+        />
+        <div
+            class="fixed inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/30 to-black/90"
+        >
+        </div>
+        <div
+            class="fixed inset-0 -z-10 bg-gradient-to-r from-black/70 via-black/20 to-transparent"
+        >
+        </div>
 
-        {/* Avatar */}
-        <div><ProfileAvatar /></div>
+        <div
+            class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 pb-14 sm:pb-16"
+        >
+            <div class="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-8">
+                {/* Picture — bottom-left */}
+                <div class="anim-fade shrink-0" style="animation-delay: 0.1s">
+                    <ProfileAvatar />
+                </div>
 
+                {/* Text */}
+                <div class="flex-1 min-w-0">
+                    <p
+                        class="anim-fade relative text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)]"
+                        style="animation-delay: 0.2s"
+                    >
+                        Driven by Instinct, Fueled by Passion
+                    </p>
 
-        {/* Heading — fades in */}
-        <h1 class="anim-fade relative text-4xl font-bold mt-5 min-h-[2.5rem]" style="animation-delay: 0.15s">
-          Hey I'm Mars!
-        </h1>
+                    <h1
+                        class="anim-fade relative text-5xl sm:text-6xl font-bold mt-3 leading-tight"
+                        style="animation-delay: 0.3s"
+                    >
+                        Hey, I'm Mars!
+                    </h1>
 
-        {/* Description — fades in after heading */}
-        <p class="anim-fade relative max-w-2xl mt-5" style="animation-delay: 0.35s">
-          Spotted hyena. Photographer. Cyber nerd. Always on the move — catch me at a con or somewhere I probably shouldn't be.
-        </p>
+                    <p
+                        class="anim-fade relative max-w-xl mt-4 text-[#ccc]"
+                        style="animation-delay: 0.45s"
+                    >
+                        Spotted hyena from Toronto! Loves adventuring,
+                        cybersecurity & IT, and VR. Huge space and aviation
+                        nerd!
+                    </p>
 
-        {/* Buttons — fade in staggered, after the text finishes resolving */}
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
-          <div class="anim-button" style="animation-delay: 0.6s">
-            <a
-              href="/socials"
-              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                        <div class="anim-button" style="animation-delay: 0.6s">
+                            <a
+                                href="/socials"
+                                class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
                 bg-[var(--accent)] text-black border-[var(--accent-shadow)]
                 shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
                 hover:translate-x-0.5 hover:translate-y-0.5
                 active:shadow-none active:translate-x-1 active:translate-y-1"
-            >
-              <MessagesSquare size={20} />
-              Contact Me
-            </a>
-          </div>
-          <div class="anim-button" style="animation-delay: 0.75s">
-            <a
-              href="/about"
-              class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
+                            >
+                                <MessagesSquare size={20} />
+                                Contact Me
+                            </a>
+                        </div>
+                        <div class="anim-button" style="animation-delay: 0.75s">
+                            <a
+                                href="/about"
+                                class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
                 bg-transparent text-white border-[var(--accent)]
                 shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
                 hover:translate-x-0.5 hover:translate-y-0.5
                 active:shadow-none active:translate-x-1 active:translate-y-1"
-            >
-              <PawPrint size={20} />
-              My Fursona
-            </a>
-          </div>
+                            >
+                                <PawPrint size={20} />
+                                My Fursona
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-      </div>
-
-      {/* Small Version Text at the bottom right */}
-      <p class="text-[11px] text-[#888] mt-8 fixed bottom-2 right-4 z-10">
-        <strong>v2.1.1</strong>
-      </p>
+        {/* Small Version Text at the bottom right */}
+        <div
+            class="text-[11px] text-[#888] fixed bottom-2 right-4 z-10 text-right leading-tight"
+        >
+            <p><strong>v3.0.1-union-to</strong></p>
+            <p>
+                Picture by
+                <a
+                    href="https://x.com/yellyXP"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-[#888] hover:text-white transition-colors underline underline-offset-2 ml-1"
+                    >@yellyXP</a
+                >
+            </p>
+        </div>
     </main>
 </Layout>
 
 <style>
-  .anim-fade {
-    opacity: 0;
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-
-  .anim-button {
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.5s ease-out forwards;
-  }
-
-  @keyframes fadeIn {
-    to {
-      opacity: 1;
+    .hero-img {
+        transform: scale(1.06);
+        animation: heroZoomOut 1.6s ease-out forwards;
     }
-  }
 
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    .anim-fade {
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }
-  }
+
+    .anim-button {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.5s ease-out forwards;
+    }
+
+    @keyframes heroZoomOut {
+        to {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
