@@ -1,6 +1,6 @@
 ---
-title: "Sorry Ontario, I've made mistakes."
-description: "This isn’t an easy post to write, but it’s one that has been weighing on me, and it’s something I need to put out there publicly."
+title: "Taking Accountability and An Apology"
+description: "An honest acknowledgment of my past choices, taking ownership of my silence, and apologizing to the community."
 pubDate: 2026-09-12
 tags: ["special", "system"]
 hidden: true
