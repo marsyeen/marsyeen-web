@@ -8,6 +8,7 @@ import {
     ShieldCheck,
     Code,
     PawPrint,
+    TriangleAlert,
 } from "@lucide/astro";
 
 const interests = [
@@ -46,6 +47,10 @@ const characters = [
             href: "/socials",
             icon: "message",
             external: false,
+        },
+        notice: {
+            title: "Temporarily Decommissioned",
+            body: "Due to an incident, Lynix is temporarily decommissioned from future events. Mars will be taking over in the meantime. Lynix is also getting a fresh upgrade from NetTuffs v2.0 to v4.0.",
         },
         stats: [
             { label: "Character", value: "Mars — Spotted Hyena" },
@@ -100,6 +105,7 @@ const characters = [
             icon: "message",
             external: false,
         },
+        notice: null,
         stats: [
             { label: "Name", value: "Lynix" },
             { label: "Species", value: "Wolf" },
@@ -222,6 +228,27 @@ const characters = [
                     ]}
                     style={`--accent:${c.accent};--shadow:${c.shadow}; background:linear-gradient(180deg, ${c.accent}22 0%, #0a0a0a 100%);`}
                 >
+                    {c.notice && (
+                        <div
+                            class="w-full bg-red-700 border-b-2 border-red-950 text-white"
+                            role="alert"
+                        >
+                            <div class="max-w-6xl mx-auto px-6 lg:px-8 py-4 flex items-start gap-3">
+                                <TriangleAlert
+                                    size={20}
+                                    class="flex-shrink-0 mt-0.5"
+                                />
+                                <div>
+                                    <p class="text-[12px] font-bold tracking-[0.25em] uppercase mb-1">
+                                        {c.notice.title}
+                                    </p>
+                                    <p class="text-[14px] leading-relaxed">
+                                        {c.notice.body}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div class="max-w-6xl mx-auto px-6 lg:px-8 py-16 grid lg:grid-cols-2 gap-16 items-center">
                         <div>
                             <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
