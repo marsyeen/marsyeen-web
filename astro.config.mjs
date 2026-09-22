@@ -15,5 +15,5 @@ export default defineConfig({
     css: { postcss: { plugins: [] } }
   },
 
-  //adapter: cloudflare()
+  adapter: cloudflare()
 });
