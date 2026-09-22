@@ -20,6 +20,7 @@ export function createMarsScene(canvas, kind = 'mars') {
     W = Math.ceil(vw / P); H = Math.ceil(vh / P);
     canvas.width = W; canvas.height = H; canvas.style.width = W * P + 'px'; canvas.style.height = H * P + 'px';
     g.imageSmoothingEnabled = false;
+    if (world) world.destroy();
     world = makeMarsWorld(W, H, { rx: .7, flag: .88, kind, character: kind === 'moon' ? 'lynix' : 'mars' }); // off to the right, clear of the page text
     if (reduceMotion) draw(0);
   }
@@ -41,6 +42,7 @@ export function createMarsScene(canvas, kind = 'mars') {
   function destroy() {
     destroyed = true; cancelAnimationFrame(rafId); clearTimeout(resizeTimer);
     window.removeEventListener('resize', onResize);
+    if (world) world.destroy();
   }
 
   build();

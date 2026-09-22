@@ -24,7 +24,7 @@
 
 <script>
 	// @ts-nocheck
-	import { clamp, mixC, rgb, rng, drawRocket, makeMarsWorld, characterName, isLynix } from '../scene/mars-art.js';
+	import { clamp, mixC, rgb, rng, drawRocket, drawAstronaut, makeMarsWorld, characterName, isLynix } from '../scene/mars-art.js';
 
 	const CD = 10;                 // countdown length
 	const NO_RETURN = 5;           // cancelling is possible until T-NO_RETURN, then it's locked in
@@ -37,10 +37,10 @@
 	const LANDED_KIND_KEY = 'mars-landed-kind'; // 'mars' or 'moon' - which destination was landed on
 	const hasLanded = () => { try { return localStorage.getItem(LANDED_KEY) === '1'; } catch (e) { return false; } };
 
-	// Countdown messages: [highest second it applies to, text]; the first entry whose limit covers n wins
+	// Countdown messages: [highest second it applies to, text]; the first entry whose limit covers n wins.
 	const MESSAGES = [
-		[0, 'LIFTOFF!'], [1, 'Ignition'], [2, 'Engines at full thrust'], [3, 'Main engine start'], [4, 'Water deluge on the pad'],
-		[5, 'Engine ignition sequence'], [7, 'Ignition sequence armed'], [10, '{name} seated and locked in'],
+		[0, 'LIFTOFF!'], [1, 'Engines at full thrust'], [2, 'Main engine start'], [4, 'Engine ignition sequence'],
+		[7, 'Ignition sequence armed'], [10, '{name} seated and locked in'],
 	];
 	const messageFor = n => (MESSAGES.find(([max]) => n <= max) || [0, ''])[1].replace('{name}', characterName());
 
@@ -90,16 +90,16 @@
 		// On the "lynix" site theme the destination is the Moon instead of Mars - fixed for this whole run,
 		// even if someone flips the theme mid-launch.
 		const kind = isLynix() ? 'moon' : 'mars';
-		const destName = kind === 'moon' ? 'MOON' : 'MARS', placeName = kind === 'moon' ? 'the Moon' : 'Mars';
+		const placeName = kind === 'moon' ? 'the Moon' : 'Mars';
 
 		// overlay
 		const root = document.createElement('div');
 		root.id = 'mars-egg'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'Launch'); root.tabIndex = -1;
 		root.innerHTML = `
 			<canvas></canvas>
-			<div class="me-hud"><div class="me-badge"><b>TORONTO → ${destName}</b><span class="me-readout"></span></div></div>
+			<div class="me-board"><div class="me-bubble"><span class="me-bubble-text"></span><div class="me-bubble-btns"><button class="me-seat" type="button" disabled>Sit</button><button class="me-back" type="button">Back out</button></div></div></div>
 			<div class="me-count"><div class="me-num"></div><div class="me-warn" style="visibility:hidden">No turning back</div><div class="me-msg"></div><button class="me-skip" type="button">Cancel launch</button></div>
-			<div class="me-title"><h2></h2><p>You made it. The first fursona on ${kind === 'moon' ? 'the Moon' : 'the red planet'}. There's no going back.</p><button class="me-return" type="button">Stay on ${placeName}</button></div>`;
+			<div class="me-title"><h2></h2><p>Welcome to ${placeName}, there's no turning back and this will be set as your background.</p><button class="me-return" type="button">Stay on ${placeName}</button></div>`;
 		document.body.appendChild(root);
 		const prevOverflow = document.documentElement.style.overflow;
 		document.documentElement.style.overflow = 'hidden';
@@ -107,8 +107,9 @@
 		canvas.width = W; canvas.height = H; canvas.style.width = W * P + 'px'; canvas.style.height = H * P + 'px';
 		const g = canvas.getContext('2d'); g.imageSmoothingEnabled = false;
 		root.querySelector('.me-title h2').textContent = kind === 'moon' ? `${characterName()}, meet the Moon.` : `${characterName()}, meet Mars.`;
-		const numEl = root.querySelector('.me-num'), msgEl = root.querySelector('.me-msg'), readEl = root.querySelector('.me-readout');
+		const numEl = root.querySelector('.me-num'), msgEl = root.querySelector('.me-msg');
 		const warnEl = root.querySelector('.me-warn'), countEl = root.querySelector('.me-count'), titleEl = root.querySelector('.me-title'), skipEl = root.querySelector('.me-skip');
+		const boardEl = root.querySelector('.me-board'), bubbleEl = root.querySelector('.me-bubble-text'), seatEl = root.querySelector('.me-seat'), backEl = root.querySelector('.me-back');
 		requestAnimationFrame(() => root.classList.add('on'));
 
 		// The live city keeps running under the overlay during the countdown. At liftoff we grab a snapshot of it
@@ -133,8 +134,7 @@
 		const world = makeMarsWorld(W, H, { kind, character: kind === 'moon' ? 'lynix' : 'mars' }), gy = world.gy;
 		const smoke = [];
 
-		let raf = 0, done = false, lastN = -1, last = performance.now(), simT = startAt;
-		const t0 = performance.now() - startAt * 1000;
+		let raf = 0, done = false, lastN = -1, last = performance.now(), simT = startAt, t0 = 0;
 
 		function spawnSmoke(x, y, spread, big) {
 			smoke.push({ x, y, vx: (Math.random() - .5) * spread, vy: -Math.random() * (big ? 6 : 14), life: 0, max: 1.4 + Math.random() * 1.6, s: big ? 3 + Math.floor(Math.random() * 4) : 2 });
@@ -150,6 +150,7 @@
 		function close() {
 			if (done) return; done = true; cancelAnimationFrame(raf);
 			removeEventListener('keydown', onKey);
+			world.destroy();
 			root.classList.remove('on');
 			dispatchEvent(new Event('mars-resume-street'));
 			document.documentElement.classList.remove('mars-clearing');
@@ -162,7 +163,42 @@
 		addEventListener('keydown', onKey);
 		skipEl.addEventListener('click', leave);
 		root.querySelector('.me-return').addEventListener('click', commit);
-		skipEl.focus({ preventScroll: true });
+
+		/* --- boarding: walk to the ship, then wait for Seat / Back out --- */
+		function board() {
+			bubbleEl.textContent = `Let's go to ${placeName}?`;
+			const startX = -8, doorX = rx - 9, headKind = kind === 'moon' ? 'lynix' : 'mars';
+			let bstart = performance.now(), arrived = false;
+			// Anchors the speech bubble right above the character's head, in screen (not art-pixel) space.
+			function positionBoard() {
+				const rect = canvas.getBoundingClientRect();
+				boardEl.style.left = (rect.left + doorX * P) + 'px';
+				boardEl.style.top = (rect.top + (groundBase - 23) * P) + 'px';
+			}
+			function bframe(now) {
+				if (done) return;
+				const bt = (now - bstart) / 1000;
+				g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, W, H);
+				drawPad(g, rx, groundBase, bt);
+				drawRocket(g, rx, groundBase, { flame: 0, legs: true, empty: true, head: headKind });
+				const ax = Math.min(doorX, startX + bt * 24);
+				if (!arrived && ax >= doorX) { arrived = true; seatEl.disabled = false; positionBoard(); boardEl.classList.add('show'); }
+				drawAstronaut(g, ax, groundBase + 3, { walk: ax < doorX, t: bt, head: headKind });
+				raf = requestAnimationFrame(bframe);
+			}
+			raf = requestAnimationFrame(bframe);
+			seatEl.addEventListener('click', () => {
+				if (seatEl.disabled) return;
+				boardEl.classList.remove('show');
+				cancelAnimationFrame(raf);
+				startCountdown();
+			});
+			backEl.addEventListener('click', close);
+		}
+		function startCountdown() {
+			t0 = performance.now() - startAt * 1000; last = performance.now();
+			raf = requestAnimationFrame(frame);
+		}
 
 		/* --- drawing pieces --- */
 		function drawStars(space, drift, speed) {
@@ -190,7 +226,7 @@
 			simT = freeze ? startAt : (now - t0) / 1000;
 			const t = simT;
 			g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, W, H);
-			let hud = '', showCount = false;
+			let showCount = false;
 			const lock = locked();
 			if (warnEl.style.visibility !== (lock ? 'visible' : 'hidden')) { warnEl.style.visibility = lock ? 'visible' : 'hidden'; skipEl.style.display = lock ? 'none' : ''; }
 
@@ -219,7 +255,6 @@
 				if (t < CD) { showCount = true; const n = Math.ceil(CD - t); if (n !== lastN) { lastN = n; numEl.textContent = n === 0 ? '0' : String(n); msgEl.textContent = messageFor(n); numEl.classList.remove('pop'); void numEl.offsetWidth; numEl.classList.add('pop'); } }
 				else if (lastN !== 0) { lastN = 0; numEl.textContent = '0'; msgEl.textContent = 'LIFTOFF!'; numEl.classList.remove('pop'); void numEl.offsetWidth; numEl.classList.add('pop'); }
 				if (t >= CD && t < CD + 2.4) showCount = true;
-				hud = t < CD ? `T-${String(Math.ceil(CD - t)).padStart(2, '0')}` : `T+${lt.toFixed(1)}s · ALT ${Math.round(alt * 40).toLocaleString('en-CA')} m`;
 			} else {
 				/* ===== Mars or the Moon ===== */
 				const ms = t - T_SURF;
@@ -230,11 +265,9 @@
 				world.actors(g, ms, simT);
 				if (ms > 5) titleEl.classList.add('show');
 				skipEl.style.display = 'none';                                  // no way back once we've touched down
-				hud = kind === 'moon' ? 'MOON · Sea of Tranquility on the horizon' : 'MARS · Olympus Mons on the horizon';
 			}
 
 			if (countEl.dataset.on !== String(showCount)) { countEl.dataset.on = String(showCount); countEl.style.opacity = showCount ? '1' : '0'; }
-			if (readEl.textContent !== hud) readEl.textContent = hud;
 			// fade through black between the climb and the surface
 			if (t > T_LIFT && t < T_END_FADE && !reduce) {
 				const e = (t - T_LIFT) / (T_END_FADE - T_LIFT), a = 1 - Math.abs(e - .5) * 2;
@@ -242,7 +275,10 @@
 			}
 			raf = requestAnimationFrame(frame);
 		}
-		raf = requestAnimationFrame(frame);
+		// A debug jump (marsEgg.launch(seconds)) drops straight into the countdown/climb; a normal
+		// launch walks to the ship first and waits for Seat / Back out.
+		if (startAt > 0 || freeze) startCountdown();
+		else board();
 	}
 
 	/* ---------- triggers ---------- */
@@ -280,15 +316,6 @@
 	#mars-egg.on { opacity: 1; }
 	#mars-egg canvas { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); image-rendering: pixelated; }
 
-	#mars-egg .me-hud { position: absolute; top: 18px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
-	#mars-egg .me-badge {
-		display: inline-flex; align-items: center; gap: 12px; padding: 6px 12px; background: rgba(0, 0, 0, 0.8);
-		border: 1px solid rgba(255, 176, 32, 0.4); box-shadow: 3px 3px 0 rgba(255, 176, 32, 0.25);
-		color: #ffb020; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; text-shadow: 0 0 6px rgba(255, 176, 32, 0.6);
-	}
-	#mars-egg .me-readout { opacity: 0.85; }
-	#mars-egg .me-readout:empty { display: none; }
-
 	#mars-egg .me-count { position: absolute; top: 16%; left: 0; right: 0; text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; }
 	#mars-egg .me-num {
 		font-size: clamp(4.5rem, 16vw, 10rem); font-weight: 800; line-height: 1; letter-spacing: 0.04em;
@@ -321,5 +348,32 @@
 	}
 	#mars-egg button:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--accent-shadow, #7a3200); }
 	#mars-egg .me-skip { margin-top: 18px; pointer-events: auto; }
+
+	#mars-egg .me-board {
+		position: absolute; top: 0; left: 0; text-align: center; white-space: nowrap;
+		opacity: 0; transform: translate(-50%, calc(-100% - 10px)); transition: opacity 0.35s ease; pointer-events: none;
+	}
+	#mars-egg .me-board.show { opacity: 1; pointer-events: auto; }
+	#mars-egg .me-bubble {
+		position: relative; display: inline-block; padding: 8px 12px; background: #0f0f0f;
+		border: 2px solid var(--accent, #ff6b1a); box-shadow: 4px 4px 0 var(--accent-shadow, #7a3200);
+		font-size: clamp(0.8rem, 2.2vw, 0.95rem); font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+	}
+	#mars-egg .me-bubble-text { display: block; margin-bottom: 8px; }
+	#mars-egg .me-bubble::before {
+		content: ''; position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%);
+		border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid var(--accent, #ff6b1a);
+	}
+	#mars-egg .me-bubble::after {
+		content: ''; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%);
+		border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #0f0f0f;
+	}
+	#mars-egg .me-bubble-btns { display: flex; gap: 8px; justify-content: center; }
+	#mars-egg .me-bubble-btns button { font-size: 0.7rem; padding: 5px 10px; border-width: 1.5px; box-shadow: 2px 2px 0 var(--accent-shadow, #7a3200); }
+	#mars-egg .me-bubble-btns button:hover { box-shadow: 1px 1px 0 var(--accent-shadow, #7a3200); }
+	#mars-egg .me-back { background: transparent; color: var(--accent, #ff6b1a); box-shadow: none; }
+	#mars-egg .me-back:hover { background: rgba(255, 255, 255, 0.08); transform: none; box-shadow: none; }
+	#mars-egg .me-seat:disabled { opacity: 0.4; cursor: default; }
+	#mars-egg .me-seat:disabled:hover { transform: none; box-shadow: 2px 2px 0 var(--accent-shadow, #7a3200); }
 	@media (prefers-reduced-motion: reduce) { #mars-egg .me-num.pop { animation: none; } }
 </style>

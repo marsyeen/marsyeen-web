@@ -8,12 +8,12 @@ export const rgb = c => `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`;
 export function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
 /* ---------- little sprites, drawn with rectangles ---------- */
-export const HEAD = [ // Mars, a spotted hyena, front-facing: rounded ears, tawny spotted coat, blunt black nose.
-	'.BBB...BBB.', // B dark fur/rim  G tawny coat  S spot  C cream muzzle  E eye  N nose
+export const HEAD = [ // Mars, a spotted hyena, front-facing: rounded ears, a dark mane down the brow, tawny spotted coat, blunt black nose.
+	'.BBB...BBB.', // B dark fur/rim/mane  G tawny coat  S spot  C cream muzzle  E eye  N nose
 	'BBBBB.BBBBB',
-	'BGGGGGGGGGB',
-	'GGSGGGGGSGG',
-	'GGEGGGGGEGG',
+	'BGGGGBGGGGB',
+	'GGSGGBGGSGG',
+	'GGEGGBGGEGG',
 	'GSGGGGGGGSG',
 	'.GGCCCCCGG.',
 	'..GCCCCCG..',
@@ -21,20 +21,20 @@ export const HEAD = [ // Mars, a spotted hyena, front-facing: rounded ears, tawn
 	'....CCCC...',
 ];
 const HEAD_COL = { B: '#2a1b12', G: '#c9932f', S: '#4a2f18', C: '#e8c98a', E: '#2fa84f', N: '#111111' };
-/** Lynix (site theme "lynix"), a front-facing wolf: black fur, purple muzzle, lavender ears, amber eyes. L lavender  P purple  A amber  W white */
+/** Lynix (site theme "lynix"), a front-facing fursuit wolf: black fur, blue muzzle with white brow/cheek markings, lavender ears, icy eyes. */
 export const HEAD_LYNIX = [
-	'..B.....B..', // pointed ears, tapering wider as they meet the head
-	'.BLB...BLB.',
+	'..B.....B..', // B black fur  P blue muzzle  L lavender ear  W white marking  I icy eye  N nose
+	'.BLB...BLB.', // pointed ears, tapering wider as they meet the head
 	'BBLBB.BBLBB',
 	'BBLBBBBBLBB',
-	'BBBBBBBBBBB',
-	'BBABBBBBABB',
+	'BBBBBWBBBBB',
+	'BBIBBBBBIBB',
 	'BBBPPPPPBBB',
-	'.BBPPPPPBB.',
+	'.BWPPPPPWB.',
 	'..BPPNPPB..',
 	'...BPWPB...',
 ];
-const HEAD_COL_LYNIX = { B: '#14101f', P: '#5b34c7', L: '#c9a7ee', W: '#f4f0ff', A: '#e0a840', N: '#050508' };
+const HEAD_COL_LYNIX = { B: '#14101f', P: '#2f3fd6', L: '#c9a7ee', W: '#f4f0ff', I: '#bfe6ff', N: '#050508' };
 /** Who gets launched depends on the site theme. */
 export const isLynix = () => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'lynix';
 export const characterName = () => (isLynix() ? 'Lynix' : 'Mars');
@@ -92,11 +92,20 @@ export function drawRocket(g, cx, baseY, o) {
 	}
 	if (o.flame > 0) {
 		const len = (8 + 16 * o.flame) * (.85 + Math.random() * .3);
-		g.globalAlpha = .28; g.fillStyle = '#ff9a3a'; g.fillRect(cx - 7, baseY, 14, len * .55); g.globalAlpha = 1;
+		// soft outer glow, tapering with the flame instead of a flat block
+		const glowLen = len * .7;
+		g.globalAlpha = .25;
+		for (let k = 0; k < glowLen; k++) {
+			const w = Math.max(1, Math.round(11 * (1 - Math.pow(k / glowLen, 1.6))));
+			g.fillStyle = '#ff9a3a'; g.fillRect(cx - (w >> 1), baseY + k, w, 1);
+		}
+		g.globalAlpha = 1;
 		for (let k = 0; k < len; k++) {
-			const w = Math.max(1, Math.round(6 * (1 - k / len)));
+			const taper = 1 - Math.pow(k / len, 1.4);
+			const jitter = k > len * .4 ? Math.round((Math.random() - .5) * 2 * (k / len)) : 0;
+			const w = Math.max(1, Math.round(6 * taper));
 			g.fillStyle = k < len * .3 ? '#fff6c8' : k < len * .6 ? '#ffd25a' : '#ff7a1a';
-			g.fillRect(cx - (w >> 1), baseY + k, w, 1);
+			g.fillRect(cx - (w >> 1) + jitter, baseY + k, w, 1);
 		}
 	}
 }
@@ -134,11 +143,15 @@ const LAND_T = 3.8; // seconds the powered landing takes
  * The Martian (or, on the "lynix" theme, lunar) surface for a canvas W x H art pixels: sky, sun,
  * ridges, rocks, rover, dust, plus the landed rocket, the flag and the pilot himself.
  *   draw(g, ms, dt)         backdrop. ms = seconds since touchdown started (only the rover uses it)
- *   actors(g, ms, t)        rocket, flag and astronaut for that moment of the landing story
+ *   actors(g, ms, t)        rocket, flag and astronaut for that moment of the landing story - steps out,
+ *                           waves hello, walks over and plants the flag, then (if opts.interactive) hands
+ *                           control to the player: A/D or arrow keys walk, W/space/up jumps
  *   alt(ms)                 rocket height above the ground while landing (0 once down)
+ *   destroy()                removes the keyboard listeners opts.interactive registered
  * opts.rx / opts.flag: where the rocket and the flag stand, as a fraction of the width.
  * opts.kind: 'mars' (default) or 'moon' - a black airless sky, grey ground, craters, no dust, Earth overhead.
  * opts.character: 'mars' | 'lynix' - who's landing, fixed regardless of the live site theme.
+ * opts.interactive: false disables the WASD/jump control handoff (default true).
  */
 export function makeMarsWorld(W, H, opts = {}) {
 	const r = rng(9);
@@ -156,6 +169,21 @@ export function makeMarsWorld(W, H, opts = {}) {
 	const flagX = Math.round(W * (opts.flag ?? .64)), doorX = rx + 6;
 	const dust = Array.from({ length: 26 }, () => ({ x: r() * W, y: hy + r() * (H - hy), v: 4 + r() * 10, s: 1 + Math.floor(r() * 2) }));
 	const stars = moon ? Array.from({ length: 90 }, () => ({ x: r() * W, y: r() * (hy - 4), tw: r() * 6 })) : [];
+
+	// Once the flag is planted, WASD/arrows walk the pilot around and W/space/up jumps.
+	const interactive = opts.interactive !== false;
+	const keys = Object.create(null);
+	const movementKeys = ['w', 'a', 's', 'd', ' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
+	function onKeyDown(e) {
+		const t = e.target;
+		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+		const k = e.key.toLowerCase();
+		if (movementKeys.includes(k)) e.preventDefault();
+		keys[k] = true;
+	}
+	function onKeyUp(e) { keys[e.key.toLowerCase()] = false; }
+	if (interactive && typeof window !== 'undefined') { window.addEventListener('keydown', onKeyDown); window.addEventListener('keyup', onKeyUp); }
+	let freeX = null, jumpY = 0, vy = 0, grounded = true, facing = 1, walking = false, prevMs = null;
 
 	function draw(g, ms, dt) {
 	// sky
@@ -205,11 +233,13 @@ export function makeMarsWorld(W, H, opts = {}) {
 	}
 	const alt = ms => 190 * Math.pow(1 - clamp(ms / LAND_T, 0, 1), 2);
 	function actors(g, ms, t) {
+		const dt = clamp(prevMs == null ? 0 : ms - prevMs, 0, .05); prevMs = ms;
 		const a = alt(ms), rbase = Math.round(gy + 2 - a);
-		const out = 5.8;
+		const out = 5.8, waveDur = 1.3;
 		drawRocket(g, rx, rbase, { flame: ms < LAND_T ? .9 - ms / LAND_T * .4 : 0, legs: a < 45, door: ms > 5.2 ? 1 : 0, empty: ms > out, head: character });
-		// Mars steps out, walks to the flag, plants it, waves
-		const walkSpeed = 20, dist = flagX - doorX, arrive = out + dist / walkSpeed;
+		if (ms <= out) return;
+		// Mars steps out, waves hello, walks to the flag and plants it
+		const walkStart = out + waveDur, walkSpeed = 20, dist = flagX - doorX, arrive = walkStart + dist / walkSpeed;
 		const flagT = clamp((ms - arrive - .4) / 1.8, 0, 1);
 		if (flagT > 0) {
 			const ph = Math.round(20 * flagT);
@@ -219,10 +249,30 @@ export function makeMarsWorld(W, H, opts = {}) {
 				for (let row = 0; row < CA_FLAG.length; row++) for (let col = 0; col < fw; col++) { g.fillStyle = CA_FLAG_COL[CA_FLAG[row][col]]; g.fillRect(flagX + 9 + col, fy + row, 1, 1); }
 			}
 		}
-		if (ms > out) {
-			const ax = Math.min(flagX, Math.round(doorX + (ms - out) * walkSpeed));
-			drawAstronaut(g, ax, gy + 3, { walk: ax < flagX, wave: flagT >= 1, t, head: character, accent });
+		// Once the flag's planted, control passes to the player: A/D or arrows to walk, W/space/up to jump
+		if (flagT >= 1 && interactive) {
+			if (freeX === null) freeX = flagX;
+			let mvx = 0;
+			if (keys['a'] || keys['arrowleft']) mvx -= 1;
+			if (keys['d'] || keys['arrowright']) mvx += 1;
+			if (mvx) facing = mvx;
+			freeX = clamp(freeX + mvx * 26 * dt, 4, W - 4);
+			walking = mvx !== 0 && grounded;
+			if ((keys['w'] || keys[' '] || keys['arrowup']) && grounded) { vy = -42; grounded = false; }
+			vy = Math.min(vy + 140 * dt, 220); jumpY = Math.min(0, jumpY + vy * dt);
+			if (jumpY >= 0) { jumpY = 0; vy = 0; grounded = true; }
+			g.save();
+			if (facing < 0) { g.translate(Math.round(freeX) * 2, 0); g.scale(-1, 1); }
+			drawAstronaut(g, Math.round(freeX), gy + 3 + Math.round(jumpY), { walk: walking, wave: false, t, head: character, accent });
+			g.restore();
+			return;
 		}
+		const waveNow = ms < walkStart;
+		const ax = waveNow ? doorX : Math.min(flagX, Math.round(doorX + (ms - walkStart) * walkSpeed));
+		drawAstronaut(g, ax, gy + 3, { walk: ax < flagX && !waveNow, wave: waveNow || flagT >= 1, t, head: character, accent });
 	}
-	return { rx, hy, gy, W, H, draw, actors, alt, landT: LAND_T, kind: moon ? 'moon' : 'mars' };
+	function destroy() {
+		if (interactive && typeof window !== 'undefined') { window.removeEventListener('keydown', onKeyDown); window.removeEventListener('keyup', onKeyUp); }
+	}
+	return { rx, hy, gy, W, H, draw, actors, alt, landT: LAND_T, kind: moon ? 'moon' : 'mars', destroy };
 }
