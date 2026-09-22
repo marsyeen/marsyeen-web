@@ -41,7 +41,7 @@ const moreActive = moreLinks.some((l) => l.href === current);
             class="flex items-center gap-2 font-bold text-white tracking-wide"
         >
             {/*}<PawPrint size={20} class="text-[var(--accent)]" />*/}
-            Mars
+            <span data-theme-name>Mars</span>
         </a>
 
         {/* Desktop links */}
@@ -259,4 +259,24 @@ const moreActive = moreLinks.some((l) => l.href === current);
         setupNavbar();
         setupMoreDropdown();
     });
+</script>
+
+<script>
+    // The site name follows the theme: Mars (orange) or Lynix (purple)
+    function applySiteName() {
+        const name = document.documentElement.dataset.theme === "lynix" ? "Lynix" : "Mars";
+        document.querySelectorAll<HTMLElement>("[data-theme-name]").forEach((el) => (el.textContent = name));
+        document.querySelectorAll<HTMLElement>("[data-theme-alt]").forEach((el) => el.setAttribute("alt", `${name} Fursona`));
+        document.querySelectorAll<HTMLImageElement>("[data-src-mars]").forEach((el) => {
+            const src = name === "Lynix" ? el.dataset.srcLynix : el.dataset.srcMars;
+            if (src && el.getAttribute("src") !== src) el.setAttribute("src", src);
+        });
+        document.querySelectorAll<HTMLElement>("[data-theme-text]").forEach((el) => {
+            const text = name === "Lynix" ? el.dataset.lynix : el.dataset.mars;
+            if (text) el.textContent = text;
+        });
+    }
+    applySiteName();
+    document.addEventListener("theme:change", applySiteName);
+    document.addEventListener("astro:page-load", applySiteName);
 </script>

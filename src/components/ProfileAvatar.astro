@@ -12,8 +12,7 @@ const quips = [
 ---
 
 <div
-  class="profile-avatar relative w-40 h-40 mb-5 mx-auto"
-  style="perspective:600px;"
+  class="profile-avatar relative w-40 h-40 sm:w-44 sm:h-44 mb-5 mx-auto"
 >
   <div
     class="speech-bubble absolute -top-10 left-[70%] z-20
@@ -41,14 +40,16 @@ const quips = [
   </div>
 
   <div
-    class="avatar w-full h-full rounded-full border-4 border-[var(--accent)] overflow-hidden"
-    style="box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.5);"
+    class="avatar w-full h-full overflow-hidden bg-[#0f0f0f] border-4 border-[var(--accent)]"
+    style="box-shadow: 6px 6px 0 var(--accent-shadow), 0 0 22px rgba(var(--accent-rgb), 0.35), inset 0 0 0 2px #0f0f0f;"
   >
     <div class="avatar-inner w-full h-full">
       <img
         src="/imgs/pfp.png"
-        alt="Mars Fursona"
-        class="w-full h-full object-contain rounded-full"
+        data-src-mars="/imgs/pfp.png"
+        data-src-lynix="/lynix-pfp.png"
+        alt="Fursona" data-theme-alt
+        class="w-full h-full object-cover"
         loading="eager"
         fetchpriority="high"
       />
@@ -87,18 +88,9 @@ const quips = [
 </script>
 
 <style>
-.profile-avatar .avatar {
-  transition: transform 0.3s cubic-bezier(.22,1,.36,1);
-  transform-style: preserve-3d;
-}
-
-.profile-avatar.hovered .avatar {
-  transform: rotateX(8deg) rotateY(8deg) scale(0.94);
-}
-
 .speech-bubble {
   opacity: 0;
-  transform: translateY(8px) scale(.9) rotateX(8deg) rotateY(8deg);
+  transform: translateY(8px) scale(.9);
   transition:
     opacity .2s ease,
     transform .2s ease;
@@ -107,6 +99,6 @@ const quips = [
 
 .speech-bubble.show {
   opacity: 1;
-  transform: translateY(0) scale(1) rotateX(8deg) rotateY(8deg);
+  transform: translateY(0) scale(1);
 }
 </style>

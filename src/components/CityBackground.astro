@@ -1,0 +1,52 @@
+<canvas id="city-background" class="city-background" aria-hidden="true"></canvas>
+
+<script>
+	import { createScene } from '../scene/scene.js';
+	import { createMarsScene } from '../scene/mars.js';
+
+	// Once the Mars launch easter egg has landed, Mars (or the Moon, on the "lynix" theme) replaces
+	// Toronto for good (see MarsEasterEgg.astro).
+	const landed = () => { try { return localStorage.getItem('mars-landed') === '1'; } catch { return false; } };
+	const landedKind = () => { try { return localStorage.getItem('mars-landed-kind') || 'mars'; } catch { return 'mars'; } };
+
+	function mountCityBackground() {
+		const canvas = document.querySelector<HTMLCanvasElement>('#city-background');
+		if (!canvas || canvas.dataset.bound) return;
+		canvas.dataset.bound = 'true';
+
+		// ---- Scene options: uncomment / edit to change the scene ----
+		let scene = landed() ? createMarsScene(canvas, landedKind()) : createScene(canvas, {
+			time: 22 * 60,       // 'live' (Toronto clock) | 'timelapse' | minutes after midnight, e.g. 22 * 60
+			weather: 'rain',    // 'clear' | 'rain' | 'snow'
+		});
+
+		// The site's falling-star canvas would sit on top of the scene's own stars, so hide it meanwhile.
+		const siteStars = document.querySelector<HTMLElement>('#star-background');
+		if (siteStars) siteStars.style.display = 'none';
+
+		// The easter egg fires this the moment it lands, so the swap happens live, no reload.
+		const onLanded = (e: Event) => { scene.destroy(); scene = createMarsScene(canvas, (e as CustomEvent).detail || landedKind()); };
+		window.addEventListener('mars-landed', onLanded);
+
+		document.addEventListener('astro:before-swap', () => {
+			scene.destroy();
+			window.removeEventListener('mars-landed', onLanded);
+			if (siteStars) siteStars.style.display = '';
+		}, { once: true });
+	}
+
+	mountCityBackground();
+	document.addEventListener('astro:page-load', mountCityBackground);
+</script>
+
+<style>
+	.city-background {
+		position: fixed;
+		left: 50%;
+		bottom: 0;
+		transform: translateX(-50%);
+		z-index: -10;
+		pointer-events: none;
+		image-rendering: pixelated;
+	}
+</style>

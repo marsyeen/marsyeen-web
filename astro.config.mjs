@@ -10,8 +10,10 @@ export default defineConfig({
   output: 'static',
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // Stop Vite picking up a stray postcss.config.js from a parent folder (Tailwind v4 needs no PostCSS config)
+    css: { postcss: { plugins: [] } }
   },
 
-  adapter: cloudflare()
+  //adapter: cloudflare()
 });

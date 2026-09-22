@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ProfileAvatar from "../components/ProfileAvatar.astro";
+import CityBackground from "../components/CityBackground.astro";
+import MarsEasterEgg from "../components/MarsEasterEgg.astro";
 import { MessagesSquare, PawPrint } from "@lucide/astro";
 ---
 
@@ -9,26 +11,24 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
         class="relative min-h-[calc(100vh-4rem-2px)] flex flex-col justify-end overflow-hidden"
     >
         {
-            /* Full-bleed background image — fixed so it fills the navbar area too */
+            /* Animated city scene — fixed so it fills the navbar area too */
         }
-        <img
-            src="/bg.jpg"
-            alt=""
-            class="hero-img fixed inset-0 -z-10 w-full h-full object-cover object-center"
-        />
+        <CityBackground />
+        <MarsEasterEgg />
+        {/* Darkening so the text stays readable over the scene */}
         <div
-            class="fixed inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/30 to-black/90"
+            class="fixed inset-0 -z-10 bg-gradient-to-b from-black/40 via-transparent to-black/60"
         >
         </div>
         <div
-            class="fixed inset-0 -z-10 bg-gradient-to-r from-black/70 via-black/20 to-transparent"
+            class="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_55%_60%_at_25%_88%,rgba(0,0,0,0.75)_0%,rgba(0,0,0,0.45)_50%,transparent_100%)]"
         >
         </div>
 
         <div
             class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 pb-14 sm:pb-16"
         >
-            <div class="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-8">
+            <div class="flex flex-col sm:flex-row sm:items-start gap-6 sm:gap-8">
                 {/* Picture — bottom-left */}
                 <div class="anim-fade shrink-0" style="animation-delay: 0.1s">
                     <ProfileAvatar />
@@ -36,25 +36,25 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
 
                 {/* Text */}
                 <div class="flex-1 min-w-0">
-                    <p
-                        class="anim-fade relative text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)]"
+                    <h1
+                        class="anim-fade relative text-5xl sm:text-7xl ml:0 md:-ml-1.5 font-extrabold tracking-tight leading-none"
                         style="animation-delay: 0.2s"
                     >
-                        Driven by Instinct, Fueled by Passion
-                    </p>
-
-                    <h1
-                        class="anim-fade relative text-5xl sm:text-6xl font-bold mt-3 leading-tight"
-                        style="animation-delay: 0.3s"
-                    >
-                        Hey, I'm Mars!
+                        Hey, I'm <span class="text-[var(--accent)]" data-theme-name>Mars</span>!
                     </h1>
 
                     <p
-                        class="anim-fade relative max-w-xl mt-4 text-[#ccc]"
+                        class="anim-fade glow-text relative mt-6 text-base sm:text-xl font-extrabold tracking-[0.12em] uppercase"
+                        style="animation-delay: 0.3s"
+                    >
+                        I'm Driven by Instinct, Fueled by Passion
+                    </p>
+
+                    <p
+                        class="anim-fade relative max-w-xl mt-6 pl-4 border-l-4 border-[var(--accent)] text-[#e5e5e5] leading-relaxed"
                         style="animation-delay: 0.45s"
                     >
-                        Spotted hyena from Toronto! Loves adventuring,
+                        <span data-theme-text data-mars="Spotted hyena" data-lynix="Cosmic wolf">Spotted hyena</span> from Toronto! Loves adventuring,
                         cybersecurity & IT, and VR. Huge space and aviation
                         nerd!
                     </p>
@@ -95,42 +95,119 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
         <div
             class="text-[11px] text-[#888] fixed bottom-2 right-4 z-10 text-right leading-tight"
         >
-            <p><strong>v3.0.1-union-to</strong></p>
-            <p>
-                Picture by
-                <a
-                    href="https://x.com/yellyXP"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-[#888] hover:text-white transition-colors underline underline-offset-2 ml-1"
-                    >@yellyXP</a
-                >
-            </p>
+            <p><strong>v3.2.8-king <br/>DEV VERSION DO NOT PUSH PROD</strong></p>
         </div>
     </main>
 </Layout>
 
 <style>
-    .hero-img {
-        transform: scale(1.06);
-        animation: heroZoomOut 1.6s ease-out forwards;
-    }
-
     .anim-fade {
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.7);
         opacity: 0;
         animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    /* Neon sign on its last legs: a softer glow that flickers and cuts out at random */
+    .glow-text {
+        color: var(--accent);
+        /* soft dark halo that hugs the letters, so text stays readable without a box */
+        filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.95))
+            drop-shadow(0 0 14px rgba(0, 0, 0, 0.85));
+        text-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.9),
+            0 0 3px var(--accent),
+            0 0 10px var(--accent-shadow);
+        animation: neonFlicker 7s linear 0.2s infinite;
+    }
+
+    @keyframes neonFlicker {
+        0%,
+        4%,
+        8%,
+        10%,
+        22%,
+        46%,
+        49%,
+        52%,
+        70%,
+        88%,
+        92%,
+        100% {
+            opacity: 1;
+            text-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.9),
+                0 0 3px var(--accent),
+                0 0 10px var(--accent-shadow);
+        }
+        /* cut-outs: tube goes almost dark */
+        2%,
+        6%,
+        9%,
+        47%,
+        50%,
+        90% {
+            opacity: 0.5;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+        }
+        /* struggling: dim and buzzing */
+        3%,
+        21%,
+        51%,
+        89%,
+        91% {
+            opacity: 0.75;
+            text-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.9),
+                0 0 2px var(--accent-shadow);
+        }
+        23%,
+        71% {
+            opacity: 0.88;
+            text-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.9),
+                0 0 2px var(--accent);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .glow-text {
+            opacity: 1;
+            animation: none;
+        }
+    }
+
+    /* Amber LED look, matching the destination sign on the streetcars */
+    .route-sign {
+        color: #ffb020;
+        border: 1px solid rgba(255, 176, 32, 0.4);
+        box-shadow: 3px 3px 0 rgba(255, 176, 32, 0.25);
+        text-shadow: 0 0 6px rgba(255, 176, 32, 0.6);
+    }
+
+    .route-dot {
+        width: 6px;
+        height: 6px;
+        background: #ffb020;
+        box-shadow: 0 0 6px #ffb020;
+        animation: routeBlink 1.6s steps(1) infinite;
+    }
+
+    @keyframes routeBlink {
+        50% {
+            opacity: 0.15;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .route-dot {
+            animation: none;
+        }
     }
 
     .anim-button {
         opacity: 0;
         transform: translateY(16px);
         animation: fadeUp 0.5s ease-out forwards;
-    }
-
-    @keyframes heroZoomOut {
-        to {
-            transform: scale(1);
-        }
     }
 
     @keyframes fadeIn {
