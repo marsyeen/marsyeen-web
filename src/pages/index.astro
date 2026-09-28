@@ -3,12 +3,12 @@ import Layout from "../layouts/Layout.astro";
 import ProfileAvatar from "../components/ProfileAvatar.astro";
 import CityBackground from "../components/CityBackground.astro";
 import MarsEasterEgg from "../components/MarsEasterEgg.astro";
-import { MessagesSquare, PawPrint } from "@lucide/astro";
+import { MessagesSquare, PawPrint, CalendarClock } from "@lucide/astro";
 ---
 
 <Layout transparentNav>
     <main
-        class="relative min-h-[calc(100vh-4rem-2px)] flex flex-col justify-end overflow-hidden"
+        class="relative min-h-[calc(100vh-4rem-2px)] flex flex-col justify-between overflow-hidden"
     >
         {
             /* Animated city scene — fixed so it fills the navbar area too */
@@ -25,12 +25,38 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
         >
         </div>
 
+        {/* Top Notification Banner (Right below nav) */}
+        <div class="relative z-20 w-full max-w-6xl mx-auto px-6 lg:px-8 pt-6 sm:pt-8">
+            <div
+                class="anim-fade route-sign bg-black/85 backdrop-blur-md px-4 sm:px-5 py-3 flex items-center justify-between gap-4 font-mono select-none"
+                style="animation-delay: 0.1s"
+            >
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="route-dot rounded-full shrink-0"></span>
+                    <CalendarClock size={20} class="shrink-0" />
+                    <div class="flex flex-col leading-tight truncate">
+                        <span class="text-[10px] sm:text-xs tracking-widest font-bold text-[#ffb020]/80 uppercase">
+                            UNCONFIRMED - Event System is waiting header (mars+*****)
+                        </span>
+                        <span class="text-xs sm:text-sm font-semibold tracking-wider uppercase truncate">
+                            PAYLOAD BRIEFING: OPERATION [REDACTED] IS HAPPENING SOON!
+                        </span>
+                    </div>
+                </div>
+
+                <div class="shrink-0 text-right font-mono font-bold text-xs sm:text-sm tracking-widest tabular-nums pl-2">
+                    <span id="event-countdown">--D --H --M --S</span>
+                </div>
+            </div>
+        </div>
+
+        {/* Bottom Hero Content */}
         <div
-            class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 pb-14 sm:pb-16"
+            class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 pb-14 sm:pb-16 mt-auto"
         >
             <div class="flex flex-col sm:flex-row sm:items-start gap-6 sm:gap-8">
                 {/* Picture — bottom-left */}
-                <div class="anim-fade shrink-0" style="animation-delay: 0.1s">
+                <div class="anim-fade shrink-0" style="animation-delay: 0.2s">
                     <ProfileAvatar />
                 </div>
 
@@ -38,21 +64,21 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
                 <div class="flex-1 min-w-0">
                     <h1
                         class="anim-fade relative text-5xl sm:text-7xl ml:0 md:-ml-1.5 font-extrabold tracking-tight leading-none"
-                        style="animation-delay: 0.2s"
+                        style="animation-delay: 0.3s"
                     >
                         Hey, I'm <span class="text-[var(--accent)]" data-theme-name>Mars</span>!
                     </h1>
 
                     <p
                         class="anim-fade glow-text relative mt-6 text-base sm:text-xl font-extrabold tracking-[0.12em] uppercase"
-                        style="animation-delay: 0.3s"
+                        style="animation-delay: 0.4s"
                     >
                         I'm Driven by Curiosity, Fueled by Passion 
                     </p>
 
                     <p
                         class="anim-fade relative max-w-xl mt-6 pl-4 border-l-4 border-[var(--accent)] text-[#e5e5e5] leading-relaxed"
-                        style="animation-delay: 0.45s"
+                        style="animation-delay: 0.5s"
                     >
                         <span data-theme-text data-mars="Spotted hyena" data-lynix="Cosmic wolf">Spotted hyena</span> from Toronto! Loves adventuring,
                         cybersecurity & IT, and VR. Huge space and aviation
@@ -100,6 +126,61 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
     </main>
 </Layout>
 
+<script>
+    function getUpcomingFriday(): Date {
+        const now = new Date();
+        const target = new Date(now);
+        const dayOfWeek = now.getDay();
+        
+        // Friday is day 5
+        let daysUntil = (5 - dayOfWeek + 7) % 7;
+        
+        target.setDate(now.getDate() + daysUntil);
+        target.setHours(0, 0, 0, 0); // Friday 00:00:00
+
+        // If today is Friday and past 00:00, target next week's Friday
+        if (target.getTime() <= now.getTime()) {
+            target.setDate(target.getDate() + 7);
+        }
+        return target;
+    }
+
+    function initCountdown() {
+        const display = document.getElementById("event-countdown");
+        if (!display) return;
+
+        const target = getUpcomingFriday();
+
+        function update() {
+            const now = new Date().getTime();
+            const diff = target.getTime() - now;
+
+            if (diff <= 0) {
+                if (display) display.textContent = "NOW LIVE";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            const pad = (n: number) => n.toString().padStart(2, "0");
+            
+            if (display) {
+                display.textContent = `${days}D ${pad(hours)}H ${pad(minutes)}M ${pad(seconds)}S`;
+            }
+        }
+
+        update();
+        setInterval(update, 1000);
+    }
+
+    // Handles initial load and Astro View Transitions
+    document.addEventListener("DOMContentLoaded", initCountdown);
+    document.addEventListener("astro:page-load", initCountdown);
+</script>
+
 <style>
     .anim-fade {
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.7);
@@ -110,7 +191,6 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
     /* Neon sign on its last legs: a softer glow that flickers and cuts out at random */
     .glow-text {
         color: var(--accent);
-        /* soft dark halo that hugs the letters, so text stays readable without a box */
         filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.95))
             drop-shadow(0 0 14px rgba(0, 0, 0, 0.85));
         text-shadow:
@@ -139,7 +219,6 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
                 0 0 3px var(--accent),
                 0 0 10px var(--accent-shadow);
         }
-        /* cut-outs: tube goes almost dark */
         2%,
         6%,
         9%,
@@ -149,7 +228,6 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
             opacity: 0.5;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
         }
-        /* struggling: dim and buzzing */
         3%,
         21%,
         51%,
@@ -179,7 +257,7 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
     /* Amber LED look, matching the destination sign on the streetcars */
     .route-sign {
         color: #ffb020;
-        border: 1px solid rgba(255, 176, 32, 0.4);
+        border: 1px solid rgba(255, 176, 32, 0.5);
         box-shadow: 3px 3px 0 rgba(255, 176, 32, 0.25);
         text-shadow: 0 0 6px rgba(255, 176, 32, 0.6);
     }
@@ -219,7 +297,6 @@ import { MessagesSquare, PawPrint } from "@lucide/astro";
     @keyframes fadeUp {
         to {
             opacity: 1;
-            transform: translateY(0);
         }
     }
 </style>
