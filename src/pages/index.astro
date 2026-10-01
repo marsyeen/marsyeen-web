@@ -31,18 +31,23 @@ import { MessagesSquare, PawPrint, CalendarClock } from "@lucide/astro";
                 class="anim-fade route-sign bg-black/85 backdrop-blur-md px-4 sm:px-5 py-3 flex items-center justify-between gap-4 font-mono select-none"
                 style="animation-delay: 0.1s"
             >
-                <div class="flex items-center gap-3 min-w-0">
-                    <span class="route-dot rounded-full shrink-0"></span>
-                    <PawPrint size={20} class="shrink-0" />
-                    <div class="flex flex-col leading-tight truncate">
-                        <span class="text-[10px] sm:text-xs tracking-widest font-bold text-[#ffb020]/80 uppercase">
-                            UNCONFIRMED - Event System is waiting header (mars+*****)
-                        </span>
-                        <span class="text-xs sm:text-sm font-semibold tracking-wider uppercase truncate">
-                            PAYLOAD BRIEFING: OPERATION [REDACTED] IS HAPPENING SOON!
-                        </span>
-                    </div>
-                </div>
+<div class="flex items-center gap-3 min-w-0">
+    <span class="route-dot rounded-full shrink-0"></span>
+    <PawPrint size={20} class="shrink-0" />
+    <div class="flex flex-col leading-tight truncate">
+        <span class="text-[10px] sm:text-xs tracking-widest font-bold text-[#ffb020]/80 uppercase">
+            CONFIRMED
+        </span>
+        <a 
+            href="https://wpafw.org/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="text-xs sm:text-sm font-semibold tracking-wider uppercase truncate hover:underline hover:text-[#ffb020] transition-colors"
+        >
+            MISSION DISPATCH PAYLOAD: WPAFW 2026
+        </a>
+    </div>
+</div>
 
                 <div class="shrink-0 text-right font-mono font-bold text-xs sm:text-sm tracking-widest tabular-nums pl-2">
                     <span id="event-countdown">--D --H --M --S</span>
