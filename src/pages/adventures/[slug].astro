@@ -1,0 +1,97 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/prose.css";
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import PhotoGallery from "../../components/PhotoGallery.astro";
+import { CalendarDays, MapPin, ArrowLeft, Tag } from "@lucide/astro";
+
+export async function getStaticPaths() {
+    const adventures = await getCollection("adventures", ({ data }) => (import.meta.env.PROD ? !data.draft : true));
+    return adventures.map((adventure) => ({
+        params: { slug: adventure.id },
+        props: { adventure },
+    }));
+}
+
+const { adventure } = Astro.props;
+const { data } = adventure;
+const { Content } = await render(adventure);
+
+const { photos } = data;
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+---
+
+<Layout title={`${data.title} — Adventures`}>
+    <main class="flex-1 relative z-10">
+        <header class="relative min-h-[60vh] flex items-end overflow-hidden border-b-2 border-[var(--accent)] shadow-[0_4px_0_var(--accent-shadow)]">
+            <Image
+                src={data.cover}
+                alt=""
+                width={2000}
+                format="webp"
+                loading="eager"
+                class="absolute inset-0 w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/90" />
+
+            <div class="relative w-full max-w-3xl mx-auto px-6 lg:px-8 pt-24 pb-10">
+                <a
+                    href="/adventures"
+                    class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-[#ccc] hover:text-[var(--accent)] transition-colors mb-6"
+                >
+                    <ArrowLeft size={14} />
+                    All Adventures
+                </a>
+
+                <h1 class="text-4xl sm:text-5xl font-bold text-white leading-tight mb-5 [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]">
+                    {data.title}
+                </h1>
+
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] font-mono tracking-widest uppercase text-[#ccc]">
+                    <span class="flex items-center gap-2">
+                        <CalendarDays size={13} />
+                        <time datetime={data.date.toISOString()}>{dateFormatter.format(data.date)}</time>
+                    </span>
+                    {data.location && (
+                        <span class="flex items-center gap-2">
+                            <MapPin size={13} />
+                            {data.location}
+                        </span>
+                    )}
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-3xl mx-auto px-6 lg:px-8 pt-12 pb-20">
+            {data.tags.length > 0 && (
+                <div class="flex flex-wrap items-center gap-2 mb-10">
+                    <Tag size={12} class="text-[#555]" />
+                    {data.tags.map((tag) => (
+                        <span class="text-[10px] font-bold tracking-widest uppercase text-[#777] border border-[#333] px-2 py-1">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            )}
+
+            <div class="w-full h-px bg-[#333] mb-10" />
+
+            <article class="prose">
+                <Content />
+            </article>
+        </div>
+
+        {photos.length > 0 && (
+            <section class="max-w-6xl mx-auto px-6 lg:px-8 pb-24">
+                <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
+                    {photos.length} photo{photos.length === 1 ? "" : "s"}
+                </p>
+                <h2 class="text-3xl font-bold text-white mb-8">From the trip</h2>
+
+                <PhotoGallery photos={photos} />
+            </section>
+        )}
+    </main>
+</Layout>

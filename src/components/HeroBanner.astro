@@ -1,97 +1,82 @@
 ---
 interface Props {
   src: string;
-  eyebrow: string;
+  eyebrow?: string;
   subtitle: string;
-  accent?: string;
-  shadow?: string;
 }
 
-const { src, eyebrow, subtitle, accent = "var(--accent)", shadow = "var(--accent-shadow)" } = Astro.props;
+const { src, eyebrow, subtitle } = Astro.props;
 ---
 
-<div
-  class="hero-banner relative overflow-hidden border-b-2"
-  style={`border-color:${accent}; box-shadow:0 4px 0 ${shadow};`}
->
-  <img
-    src={src}
-    alt=""
-    class="hero-banner-img absolute inset-0 w-full h-full object-cover object-center"
-  />
+<header class="hero relative min-h-[420px] sm:min-h-[460px] flex items-end overflow-hidden border-b-2 border-[var(--accent)] shadow-[0_4px_0_var(--accent-shadow)]">
+  <img src={src} alt="" class="hero-img absolute inset-0 w-full h-full object-cover object-center" />
+  <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
+  <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
 
-  <div class="hero-banner-overlay absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-[#0f0f0f]" />
-
-  <div class="relative z-10 max-w-6xl mx-auto px-6 lg:px-8 pt-32 pb-24">
-    <p
-      class="hero-banner-eyebrow text-[10px] font-bold tracking-[0.25em] uppercase mb-4"
-      style={`color:${accent}`}
-    >
-      {eyebrow}
-    </p>
-
-    <h1 class="hero-banner-title text-6xl sm:text-7xl font-bold text-white leading-none mb-5">
+  <div class="relative w-full max-w-6xl mx-auto px-6 lg:px-8 pt-28 pb-12">
+    <h1 class="hero-title text-5xl sm:text-7xl font-bold text-white leading-[0.95] [text-shadow:0_4px_24px_rgba(0,0,0,0.6)]">
       <slot />
     </h1>
 
-    <div
-      class="hero-banner-bar w-16 h-[3px] mb-6"
-      style={`background-color:${accent}; box-shadow:2px 2px 0 ${shadow}; transform-origin:left;`}
-    />
+    <div class="hero-meta flex items-center gap-4 mt-6 mb-5">
+      <span class="hero-bar block h-[3px] w-14 bg-[var(--accent)] shadow-[2px_2px_0_var(--accent-shadow)]" />
+      {eyebrow && (
+        <span class="text-[11px] sm:text-[12px] font-bold tracking-[0.3em] uppercase text-[#bbb]">
+          {eyebrow}
+        </span>
+      )}
+    </div>
 
-    <p class="hero-banner-subtitle text-[#aaa] text-lg max-w-xl leading-relaxed">
+    <p class="hero-subtitle text-[#ccc] text-base sm:text-lg max-w-xl leading-relaxed">
       {subtitle}
     </p>
   </div>
-</div>
+</header>
 
 <style>
-  .hero-banner-img {
+  .hero-img {
     transform: scale(1.08);
     animation: heroZoomOut 1.4s ease-out forwards;
   }
 
-  .hero-banner-overlay {
+  .hero-title,
+  .hero-meta,
+  .hero-subtitle {
     opacity: 0;
-    animation: heroFadeIn 0.6s ease-out forwards;
+    transform: translateY(16px);
+    animation: heroFadeUp 0.5s ease-out forwards;
   }
+  .hero-title { animation-delay: 0.2s; }
+  .hero-meta { animation-delay: 0.35s; }
+  .hero-subtitle { animation-delay: 0.5s; }
 
-  .hero-banner-eyebrow {
-    opacity: 0;
-    transform: translateY(14px);
-    animation: heroFadeUp 0.5s ease-out 0.25s forwards;
-  }
-
-  .hero-banner-title {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: heroFadeUp 0.5s ease-out 0.4s forwards;
-  }
-
-  .hero-banner-bar {
+  .hero-bar {
     transform: scaleX(0);
-    animation: heroScaleX 0.35s ease-out 0.58s forwards;
-  }
-
-  .hero-banner-subtitle {
-    opacity: 0;
-    transform: translateY(14px);
-    animation: heroFadeUp 0.5s ease-out 0.65s forwards;
+    transform-origin: left;
+    animation: heroScaleX 0.4s ease-out 0.45s forwards;
   }
 
   @keyframes heroZoomOut {
     to { transform: scale(1); }
   }
 
-  @keyframes heroFadeIn {
-    to { opacity: 1; }
-  }
-
   @keyframes heroFadeUp {
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: none; }
   }
 
   @keyframes heroScaleX {
     to { transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-img,
+    .hero-title,
+    .hero-meta,
+    .hero-subtitle,
+    .hero-bar {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
   }
 </style>

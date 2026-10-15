@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import { Globe, Images, ShieldCheck, Camera, ArrowRight } from '@lucide/astro';
+import { Globe, ArrowRight } from '@lucide/astro';
 
 const statusStyles: Record<string, string> = {
   Live: 'text-[#4ade80] border-[#4ade80]/40',
@@ -18,30 +18,6 @@ const projects = [
     desc: 'The den itself — a personal site built from scratch with Astro.',
     cta: { label: 'Back to Mars', href: '/' },
   },
-  /*{
-    icon: Images,
-    title: 'Gallery Lightbox',
-    status: 'Live',
-    tags: ['Astro', 'TypeScript', 'Image Optimization'],
-    desc: 'A folder-based gallery that walks nested image directories at build time, generates optimized thumbnails and full-size webp exports, and pairs them with a keyboard-friendly lightbox.',
-    cta: { label: 'View Gallery', href: '/gallery' },
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Homelab Hardening',
-    status: 'Ongoing',
-    tags: ['Docker', 'Networking', 'Security'],
-    desc: 'Default-deny firewall rules, a real reverse proxy in front of every public-facing service, and log shipping that actually gets read on a schedule — an ongoing project after finding one forgotten open port too many.',
-    cta: { label: 'Read the Writeup', href: '/blog/homelab-hardening-notes' },
-  },
-  {
-    icon: Camera,
-    title: 'Con Photo Culling Script',
-    status: 'In Progress',
-    tags: ['Python', 'Automation'],
-    desc: 'A small batch tool for the same-night cull-and-export workflow — sorting through hundreds of con frames fast enough to post the best one before breakfast.',
-    cta: null,
-  },*/
 ];
 ---
 

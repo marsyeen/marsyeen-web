@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# Marsyeen Rust build
+marsyeen-rs/
+
 # generated types
 .astro/
 .wrangler/

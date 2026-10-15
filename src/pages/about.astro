@@ -1,15 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import HeroBanner from "../components/HeroBanner.astro";
-import {
-    MessagesSquare,
-    ExternalLink,
-    Camera,
-    ShieldCheck,
-    Code,
-    PawPrint,
-    TriangleAlert,
-} from "@lucide/astro";
+import Notice from "../components/Notice.astro";
+import PhotoGallery from "../components/PhotoGallery.astro";
+import { MessagesSquare, Camera, ShieldCheck, Trees, Copy } from "@lucide/astro";
 
 const interests = [
     {
@@ -18,14 +11,14 @@ const interests = [
         desc: "Capturing moments at cons, on trails, and everywhere the adventure takes me.",
     },
     {
+        icon: Trees,
+        title: "Nature",
+        desc: "Trails, lakes, and campsites — getting out past the city limits whenever I can.",
+    },
+    {
         icon: ShieldCheck,
         title: "Cybersecurity / IT",
         desc: "Digging into systems, finding the gaps, and keeping things locked down.",
-    },
-    {
-        icon: Code,
-        title: "Programming",
-        desc: "Building fun projects, automating the boring stuff, and always learning new tech.",
     },
 ];
 
@@ -33,42 +26,30 @@ const characters = [
     {
         id: "mars",
         name: "Mars",
+        file: "01",
         accent: "#ff6b1a",
         shadow: "#7a3200",
         kicker: "The hyena himself",
-        headingPrefix: "Greetings! I'm ",
         image: "/about.jpg",
         bio: [
             "I'm Mars, a spotted hyena from Ontario, Canada. I'm passionate about photography, cybersecurity and adventuring to new places. I'm pretty much always on the move, hitting up as many furry conventions or sidequests as I can manage.",
             "The biggest highlight lately? FWA 2026 — where I finally made the jump to my first-ever fullbody suit. Catch me at a con? Definitely don't be a stranger.",
         ],
-        cta: {
-            label: "Get in touch",
-            href: "/socials",
-            icon: "message",
-            external: false,
-        },
         notice: {
+            type: "warning" as const,
             title: "Temporarily Decommissioned",
             body: "Due to deep cleaning, Mars is temporarily decommissioned from future events.",
         },
         stats: [
-            { label: "Character", value: "Mars — Spotted Hyena" },
+            { label: "Species", value: "Spotted Hyena" },
             { label: "Pronouns", value: "He / Him" },
             { label: "Fursona since", value: "May 2026" },
-            { label: "Suit Type", value: "Fullbody" },
+            { label: "Suit type", value: "Fullbody" },
             { label: "Built by", value: "Pawie Paws" },
             { label: "Origin", value: "Mexico" },
         ],
-        suit: {
-            kicker: "The Suit",
-            heading: "Meet Mars in the Fur",
-            sub: "Mars is quite a character — here's what makes him tick.",
-            photos: {
-                main: "/blog.jpg",
-                thumbs: ["/about.jpg", "/bg.jpg", "/socials.jpg"],
-            },
-        },
+        photosHeading: "Mars in the fur",
+        photos: ["/blog.jpg", "/about.jpg", "/bg.jpg", "/socials.jpg"],
         palette: [
             { label: "Primary Fur", hex: "#c9a06c" },
             { label: "Spots", hex: "#2b2b2b" },
@@ -91,40 +72,23 @@ const characters = [
     {
         id: "lynix",
         name: "Lynix",
+        file: "02",
         accent: "#a855f7",
         shadow: "#3b0764",
         kicker: "The purple side of me",
-        headingPrefix: "Meet ",
         image: "/imgs/events.jpg",
         bio: [
             "Lynix is my other fursona — a purple anthropomorphic space wolf, drifting between star systems and conventions right alongside Mars. Sharp-eyed, a little mischievous, and impossible to miss in a crowd thanks to that unmistakable violet fur.",
         ],
-        cta: {
-            label: "Get in touch",
-            href: "/socials",
-            icon: "message",
-            external: false,
-        },
         notice: null,
         stats: [
-            { label: "Name", value: "Lynix" },
-            { label: "Species", value: "Wolf" },
-            { label: "Fur Color", value: "Purple, White, Black" },
+            { label: "Species", value: "Space Wolf" },
+            { label: "Fur colour", value: "Purple, White, Black" },
             { label: "Origin", value: "Somewhere among the stars" },
+            { label: "Suit", value: "Not yet" },
         ],
-        suit: {
-            kicker: "The Fit",
-            heading: "Lynix's Ref Photos",
-            sub: "Suit and reference shots — added as they're ready.",
-            photos: {
-                main: "/imgs/bark.jpg",
-                thumbs: [
-                    "/imgs/train-arriving.jpg",
-                    "/imgs/banner3.jpg",
-                    "/imgs/test.jpg",
-                ],
-            },
-        },
+        photosHeading: "Lynix's ref photos",
+        photos: ["/imgs/bark.jpg", "/imgs/train-arriving.jpg", "/imgs/banner3.jpg", "/imgs/test.jpg"],
         palette: [
             { label: "Primary Fur", hex: "#a855f7" },
             { label: "Secondary Fur", hex: "#6d28d9" },
@@ -144,380 +108,353 @@ const characters = [
 
 <Layout title="About">
     <main class="flex-1 relative z-10">
-        <HeroBanner
-            src="/about.jpg"
-            eyebrow="Yip Yap?"
-            subtitle="Spotted hyena. Space wolf. Photographer. Cyber nerd. Always on the move — catch me at a con or somewhere I probably shouldn't be."
-        >
-            Welcome to<br /><span class="text-[var(--accent)]">My Den</span>
-        </HeroBanner>
+        {/* ── Intro: a terminal prompt instead of a photo banner ── */}
+        <section class="max-w-6xl mx-auto px-6 lg:px-8 pt-20 sm:pt-28 pb-16">
+            <p class="intro-line font-mono text-[13px] sm:text-sm text-[#888] mb-6" style="--d: 0s">
+                <span class="text-[var(--accent)]">&gt;</span> whoami<span class="caret" aria-hidden="true">_</span>
+            </p>
+            <h1 class="intro-line text-5xl sm:text-7xl lg:text-8xl font-bold text-white leading-[0.95]" style="--d: 0.15s">
+                Welcome to<br />
+                <span class="text-[var(--accent)] [text-shadow:0_0_40px_rgba(var(--accent-rgb),0.45)]">my den.</span>
+            </h1>
+            <p class="intro-line mt-8 max-w-2xl text-lg sm:text-xl text-[#ccc] leading-relaxed" style="--d: 0.3s">
+                Spotted hyena. Space wolf. Photographer. Cyber nerd. Always on the move — catch me at a con or
+                somewhere I probably shouldn't be.
+            </p>
+            <p class="intro-line mt-8 font-mono text-[12px] tracking-[0.2em] uppercase text-[#666]" style="--d: 0.45s">
+                2 files found · pick one below ↓
+            </p>
+        </section>
 
-        <div class="max-w-6xl mx-auto px-6 lg:px-8 py-20">
-            {/* ── Passions (shared) ── */}
-            <div>
-                <p
-                    class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2"
-                >
-                    Passions
-                </p>
-                <h2 class="text-3xl font-bold text-white mb-1">
-                    What I'm Into
-                </h2>
-                <p class="text-[#777] text-sm mb-8 mt-1">
-                    The things that keep me busy, no matter whose fur I'm in.
-                </p>
-
-                <div class="grid sm:grid-cols-3 gap-4">
-                    {
-                        interests.map(({ icon: Icon, title, desc }) => (
-                            <div
-                                class="border-2 border-[#333] bg-[#0a0a0a] p-6
-              hover:border-[var(--accent)] hover:shadow-[4px_4px_0_var(--accent-shadow)] transition-all group"
-                            >
-                                <div class="text-[var(--accent)] mb-4">
-                                    <Icon size={28} />
-                                </div>
-                                <h3 class="text-[11px] font-bold tracking-widest uppercase text-[var(--accent)] mb-2 group-hover:text-white transition-colors">
-                                    {title}
-                                </h3>
-                                <p class="text-[#aaa] text-sm leading-relaxed">
-                                    {desc}
-                                </p>
-                            </div>
-                        ))
-                    }
-                </div>
-            </div>
-        </div>
-
-        {/* ── Fursona tab switcher (full-bleed, 50/50 split) ── */}
-        <div
-            class="w-full grid grid-cols-2"
-            role="tablist"
-            aria-label="Fursona refsheets"
-        >
-            {
-                characters.map((c, i) => (
+        {/* ── Character files ── */}
+        <section class="max-w-6xl mx-auto px-6 lg:px-8 pb-24">
+            <div class="flex items-end gap-2" role="tablist" aria-label="Fursonas">
+                {characters.map((c, i) => (
                     <button
                         type="button"
                         role="tab"
                         data-tab-btn={c.id}
                         aria-selected={i === 0 ? "true" : "false"}
-                        style={`--accent:${c.accent};--shadow:${c.shadow}`}
-                        class:list={[
-                            "tab-btn w-full font-bold uppercase tracking-widest text-[14px] py-5 border-2 border-[var(--accent)] transition-all duration-100",
-                            i === 0
-                                ? "bg-[var(--accent)] text-black shadow-[inset_0_-4px_0_var(--shadow)]"
-                                : "bg-transparent text-[var(--accent)]",
-                        ]}
+                        style={`--c:${c.accent}`}
+                        class="file-tab"
                     >
-                        {c.name}
+                        <span class="font-mono text-[10px] opacity-70">FILE {c.file}</span>
+                        <span>{c.name}</span>
                     </button>
-                ))
-            }
-        </div>
+                ))}
+            </div>
 
-        {/* ── Fursona wash intros (full-bleed, one per tab) ── */}
-        {
-            characters.map((c, i) => (
+            {characters.map((c, i) => (
                 <div
                     data-tab-panel={c.id}
-                    class:list={[
-                        "w-full border-y-2 border-[var(--accent)]",
-                        i === 0 ? "" : "hidden",
-                    ]}
-                    style={`--accent:${c.accent};--shadow:${c.shadow}; background:linear-gradient(180deg, ${c.accent}22 0%, #0a0a0a 100%);`}
+                    class:list={["dossier-panel", i !== 0 && "hidden"]}
+                    style={`--accent:${c.accent};--accent-shadow:${c.shadow}`}
                 >
+                    {/* ID card */}
+                    <article class="dossier relative border-2 border-[var(--accent)] bg-[#0a0a0a]/90 shadow-[8px_8px_0_var(--accent-shadow)]">
+                        <div class="flex items-center justify-between gap-4 px-5 py-3 border-b-2 border-[var(--accent)] bg-[var(--accent)] text-black font-mono text-[11px] font-bold tracking-[0.2em] uppercase">
+                            <span>Subject file // {c.file}</span>
+                            <span class="hidden sm:inline">Classification: friendly</span>
+                        </div>
+
+                        <div class="grid lg:grid-cols-[380px_1fr]">
+                            {/* Square photo with scan line and corner brackets */}
+                            <div class="p-6 sm:p-8 lg:border-r-2 border-[#222]">
+                                <div class="scan-frame relative aspect-square overflow-hidden">
+                                    <img src={c.image} alt={`${c.name}`} class="w-full h-full object-cover" />
+                                    <span class="scan-line" aria-hidden="true" />
+                                    <span class="corner tl" /><span class="corner tr" /><span class="corner bl" /><span class="corner br" />
+                                </div>
+                            </div>
+
+                            {/* Details */}
+                            <div class="p-6 sm:p-8 lg:p-10">
+                                <p class="font-mono text-[12px] tracking-[0.2em] uppercase text-[#777]">{c.kicker}</p>
+                                <h2 class="mt-2 text-6xl sm:text-7xl font-bold text-[var(--accent)] leading-none [text-shadow:0_0_30px_color-mix(in_srgb,var(--accent)_40%,transparent)]">
+                                    {c.name}
+                                </h2>
+
+                                <dl class="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    {c.stats.map(({ label, value }) => (
+                                        <div class="flex items-baseline gap-3 font-mono text-[13px]">
+                                            <dt class="shrink-0 uppercase tracking-widest text-[#777]">{label}</dt>
+                                            <span class="flex-1 border-b border-dotted border-[#444] translate-y-[-4px]" aria-hidden="true" />
+                                            <dd class="text-white font-bold text-right">{value}</dd>
+                                        </div>
+                                    ))}
+                                </dl>
+
+                                <div class="mt-8 space-y-4">
+                                    {c.bio.map((paragraph) => (
+                                        <p class="text-[#ccc] text-base sm:text-[17px] leading-relaxed">{paragraph}</p>
+                                    ))}
+                                </div>
+
+                                <a
+                                    href="/socials"
+                                    class="mt-8 inline-flex items-center gap-2 font-bold py-3 px-6 border-2 text-[13px] tracking-widest uppercase
+                bg-[var(--accent)] text-black border-[var(--accent-shadow)]
+                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
+                hover:translate-x-0.5 hover:translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1
+                transition-all duration-100"
+                                >
+                                    <MessagesSquare size={16} />
+                                    Get in touch
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
                     {c.notice && (
-                        <div
-                            class="w-full bg-red-700 border-b-2 border-red-950 text-white"
-                            role="alert"
-                        >
-                            <div class="max-w-6xl mx-auto px-6 lg:px-8 py-4 flex items-start gap-3">
-                                <TriangleAlert
-                                    size={20}
-                                    class="flex-shrink-0 mt-0.5"
-                                />
-                                <div>
-                                    <p class="text-[12px] font-bold tracking-[0.25em] uppercase mb-1">
-                                        {c.notice.title}
+                        <Notice type={c.notice.type} title={c.notice.title} class="mt-10">
+                            {c.notice.body}
+                        </Notice>
+                    )}
+
+                    {/* Photos */}
+                    <div class="mt-24">
+                        <h3 class="section-title"><span>01</span>{c.photosHeading}</h3>
+                        <PhotoGallery photos={c.photos.map((src) => ({ src }))} />
+                    </div>
+
+                    {/* Palette */}
+                    <div class="mt-24">
+                        <h3 class="section-title"><span>02</span>Colour reference</h3>
+                        <p class="text-[#888] -mt-4 mb-8">For commissions and fan art — click a colour to copy its hex code.</p>
+                        <div class="palette flex flex-col sm:flex-row border-2 border-[#333] shadow-[6px_6px_0_var(--accent-shadow)]">
+                            {c.palette.map(({ label, hex }) => (
+                                <button
+                                    type="button"
+                                    class="swatch group relative flex-1 min-h-[72px] sm:min-h-[200px] flex flex-col justify-end p-4 text-left"
+                                    style={`background:${hex}`}
+                                    data-hex={hex}
+                                    aria-label={`Copy ${label} colour ${hex}`}
+                                >
+                                    <span class="swatch-label inline-flex flex-col gap-1 bg-black/75 px-3 py-2 self-start">
+                                        <span class="text-[11px] font-bold tracking-widest uppercase text-white">{label}</span>
+                                        <span class="swatch-hex flex items-center gap-1.5 font-mono text-[12px] text-[#bbb]">
+                                            {hex}
+                                            <Copy size={11} class="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </span>
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div class="mt-24">
+                        <h3 class="section-title"><span>03</span>Notes</h3>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            {c.misc.map((item, n) => (
+                                <div class="relative border-2 border-[#333] bg-[#0a0a0a] p-6 hover:border-[var(--accent)] hover:shadow-[4px_4px_0_var(--accent-shadow)] transition-all">
+                                    <span class="block font-mono text-4xl font-bold text-[var(--accent)]/30 mb-3">
+                                        {String(n + 1).padStart(2, "0")}
+                                    </span>
+                                    <p class="text-[#ccc] leading-relaxed">{item}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Lore, as a corrupted terminal log */}
+                    {c.originLore && (
+                        <div class="mt-24">
+                            <h3 class="section-title"><span>04</span>Origin</h3>
+                            <div class="terminal border-2 border-[var(--accent)] bg-[#050505] shadow-[6px_6px_0_var(--accent-shadow)]">
+                                <div class="flex items-center gap-2 px-4 py-2.5 border-b-2 border-[#222] font-mono text-[11px] text-[#777]">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]" />
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
+                                    <span class="ml-3">~/archive/{c.id}/origin.log</span>
+                                </div>
+                                <div class="p-6 sm:p-8 font-mono text-[14px] leading-relaxed">
+                                    <p class="text-[#777] mb-4">$ cat origin.log</p>
+                                    <p class="text-[#ccc] mb-5">
+                                        {c.originLore.intro}{" "}
+                                        <span class="glitch-text text-[var(--accent)]" data-text={c.originLore.glitchWord}>
+                                            {c.originLore.glitchWord}
+                                        </span>
                                     </p>
-                                    <p class="text-[14px] leading-relaxed">
-                                        {c.notice.body}
+                                    <p class="mb-5">
+                                        <span class="glitch-text text-[#ef4444]" data-text={c.originLore.corrupted}>
+                                            {c.originLore.corrupted}
+                                        </span>
+                                    </p>
+                                    <p class="text-[#888]">
+                                        <span class="text-[var(--accent)]">&gt;</span> {c.originLore.note}<span class="caret" aria-hidden="true">_</span>
                                     </p>
                                 </div>
                             </div>
                         </div>
                     )}
-                    <div class="max-w-6xl mx-auto px-6 lg:px-8 py-16 grid lg:grid-cols-2 gap-16 items-center">
-                        <div>
-                            <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
-                                {c.kicker}
-                            </p>
-                            <h2 class="text-3xl font-bold text-white mb-1">
-                                {c.headingPrefix}
-                                <span class="text-[var(--accent)]">
-                                    {c.name}
-                                </span>
-                            </h2>
-                            <div class="w-10 h-[2px] bg-[var(--accent)] mb-6 mt-3" />
-                            {c.bio.map((paragraph) => (
-                                <p class="text-[#aaa] leading-relaxed mb-4 text-[15px]">
-                                    {paragraph}
-                                </p>
-                            ))}
-                            <a
-                                href={c.cta.href}
-                                target={c.cta.external ? "_blank" : undefined}
-                                rel={
-                                    c.cta.external
-                                        ? "noopener noreferrer"
-                                        : undefined
-                                }
-                                class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 mt-2
-                bg-[var(--accent)] text-black border-[var(--shadow)]
-                shadow-[4px_4px_0_var(--shadow)] hover:shadow-[2px_2px_0_var(--shadow)]
-                hover:translate-x-0.5 hover:translate-y-0.5
-                active:shadow-none active:translate-x-1 active:translate-y-1
-                transition-all duration-100 text-[13px] tracking-widest uppercase"
-                            >
-                                {c.cta.icon === "external" ? (
-                                    <ExternalLink size={16} />
-                                ) : (
-                                    <MessagesSquare size={16} />
-                                )}
-                                {c.cta.label}
-                            </a>
-                        </div>
-
-                        <div class="flex justify-center lg:justify-end">
-                            <div class="relative">
-                                <div class="absolute inset-0 bg-[var(--accent)]/20 blur-2xl" />
-                                {c.image ? (
-                                    <img
-                                        src={c.image}
-                                        alt={`${c.name} Profile`}
-                                        class="relative w-[380px] h-[380px] max-w-full object-cover object-center border-2 border-[var(--accent)]
-                    shadow-[8px_8px_0_var(--shadow)] rotate-2 hover:rotate-0 transition-transform duration-300 bg-[#0a0a0a]"
-                                    />
-                                ) : (
-                                    <div
-                                        class="relative w-[380px] h-[380px] max-w-full border-2 border-[var(--accent)]
-                  shadow-[8px_8px_0_var(--shadow)] rotate-2 hover:rotate-0 transition-transform duration-300
-                  bg-[#0a0a0a] flex items-center justify-center"
-                                    >
-                                        <span class="text-[var(--accent)]/60 text-[12px] font-mono tracking-widest uppercase text-center px-6">
-                                            Ref art
-                                            <br />
-                                            coming soon
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            ))
-        }
+            ))}
+        </section>
 
-        {/* ── Fursona refsheets (rest of content) ── */}
-        <div class="max-w-6xl mx-auto px-6 lg:px-8 py-20">
-            {
-                characters.map((c, i) => (
-                    <div
-                        data-tab-panel={c.id}
-                        class:list={[i === 0 ? "" : "hidden"]}
-                        style={`--accent:${c.accent};--shadow:${c.shadow}`}
-                    >
-                        {/* Suit / Ref Photos + Quick Stats */}
-                        <div>
-                            <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
-                                {c.suit.kicker}
-                            </p>
-                            <h2 class="text-3xl font-bold text-white mb-1">
-                                {c.suit.heading}
-                            </h2>
-                            <p class="text-[#777] text-sm mb-10 mt-1">
-                                {c.suit.sub}
-                            </p>
-
-                            <div class="grid lg:grid-cols-[1.5fr_1fr] gap-8 items-start">
-                                <div>
-                                    <div
-                                        class="relative aspect-[4/3] border-2 border-[var(--accent)] shadow-[4px_4px_0_var(--shadow)]
-                  overflow-hidden mb-3 flex items-center justify-center bg-[#151515]"
-                                    >
-                                        {c.suit.photos ? (
-                                            <img
-                                                src={c.suit.photos.main}
-                                                alt={`${c.name} fursuit`}
-                                                class="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <span class="text-[#555] text-[11px] font-mono tracking-widest uppercase">
-                                                Photo coming soon
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        {(
-                                            c.suit.photos?.thumbs ?? [
-                                                null,
-                                                null,
-                                                null,
-                                            ]
-                                        ).map((thumb) => (
-                                            <div
-                                                class="relative aspect-square border border-[#333] overflow-hidden
-                      hover:border-[var(--accent)] transition-colors flex items-center justify-center bg-[#151515]"
-                                            >
-                                                {thumb ? (
-                                                    <img
-                                                        src={thumb}
-                                                        alt={`${c.name} fursuit detail`}
-                                                        class="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <PawPrint
-                                                        class="text-[#444]"
-                                                        size={20}
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-col gap-2">
-                                    {c.stats.map(({ label, value }) => (
-                                        <div
-                                            class="flex items-center justify-between px-4 py-3 border border-[#333] bg-[#0a0a0a]
-                    shadow-[2px_2px_0_var(--shadow)] hover:border-[var(--accent)] transition-colors group"
-                                        >
-                                            <span class="text-[12px] font-bold tracking-widest uppercase text-[#777] group-hover:text-[var(--accent)] transition-colors">
-                                                {label}
-                                            </span>
-                                            <span class="text-[13px] font-semibold text-white">
-                                                {value}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
+        {/* ── Shared interests ── */}
+        <section class="border-t-2 border-[#222] bg-[#0a0a0a]/80">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8 py-20">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-3">What I'm into</h2>
+                <p class="text-[#888] mb-10">The things that keep me busy, no matter whose fur I'm in.</p>
+                <div class="divide-y-2 divide-[#222] border-y-2 border-[#222]">
+                    {interests.map(({ icon: Icon, title, desc }) => (
+                        <div class="group flex items-center gap-6 sm:gap-10 py-7 px-5 sm:px-8 transition-colors hover:bg-[rgba(var(--accent-rgb),0.06)]">
+                            <span class="shrink-0 flex items-center justify-center w-14 h-14 border-2 border-[#333] text-[var(--accent)] group-hover:border-[var(--accent)] group-hover:shadow-[3px_3px_0_var(--accent-shadow)] transition-all">
+                                <Icon size={26} />
+                            </span>
+                            <div class="sm:flex sm:items-baseline sm:gap-10 flex-1">
+                                <h3 class="sm:w-64 shrink-0 text-lg sm:text-xl font-bold text-white group-hover:text-[var(--accent)] transition-colors">
+                                    {title}
+                                </h3>
+                                <p class="mt-1 sm:mt-0 text-[#aaa] leading-relaxed">{desc}</p>
                             </div>
                         </div>
-
-                        <div class="w-full h-px bg-[#333] my-16" />
-
-                        {/* Color Reference (for artists) */}
-                        <div>
-                            <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
-                                For Artists
-                            </p>
-                            <h2 class="text-3xl font-bold text-white mb-1">
-                                Color Reference
-                            </h2>
-                            <p class="text-[#777] text-sm mb-8 mt-1">
-                                Swatches for commissions and fan art.
-                            </p>
-
-                            <div class="grid sm:grid-cols-2 gap-3">
-                                {c.palette.map(({ label, hex }) => (
-                                    <div
-                                        class="flex items-center gap-4 px-4 py-3 border border-[#333] bg-[#0a0a0a]
-                  shadow-[2px_2px_0_var(--shadow)] hover:border-[var(--accent)] transition-colors"
-                                    >
-                                        <div
-                                            class="w-10 h-10 flex-shrink-0 border-2 border-[#333] shadow-[2px_2px_0_var(--shadow)]"
-                                            style={`background-color:${hex}`}
-                                        />
-                                        <div class="flex-1 flex items-baseline justify-between">
-                                            <p class="text-white text-[13px] font-bold">
-                                                {label}
-                                            </p>
-                                            <p class="text-[#777] font-mono text-[11px]">
-                                                {hex}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <p class="text-[#666] text-[11px] font-mono mt-4 tracking-widest">
-                                // Reference only — confirm exact swatches
-                                before starting artwork.
-                            </p>
-                        </div>
-
-                        <div class="w-full h-px bg-[#333] my-16" />
-
-                        {/* Misc / Notes */}
-                        <div>
-                            <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
-                                Misc
-                            </p>
-                            <h2 class="text-3xl font-bold text-white mb-1">
-                                Notes &amp; Trivia
-                            </h2>
-                            <div class="w-10 h-[2px] bg-[var(--accent)] mb-6 mt-3" />
-
-                            <ul class="space-y-3">
-                                {c.misc.map((item) => (
-                                    <li class="flex items-start gap-3 text-[#aaa] text-[14px] leading-relaxed">
-                                        <span class="mt-[7px] w-1.5 h-1.5 flex-shrink-0 bg-[var(--accent)]" />
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {/* Origin lore (Mars only) */}
-                        {c.originLore && (
-                            <>
-                                <div class="w-full h-px bg-[#333] my-16" />
-                                <div class="border-2 border-[var(--accent)] shadow-[4px_4px_0_var(--shadow)] p-8 relative overflow-hidden">
-                                    <div
-                                        class="absolute top-0 right-0 w-0 h-0
-                  border-t-[40px] border-t-[var(--accent)]
-                  border-l-[40px] border-l-transparent"
-                                    />
-
-                                    <p class="text-[12px] font-bold tracking-[0.25em] uppercase text-[var(--accent)] mb-2">
-                                        Lore
-                                    </p>
-                                    <h2 class="text-3xl font-bold text-white mb-1">
-                                        Origin
-                                    </h2>
-                                    <div class="w-10 h-[2px] bg-[var(--accent)] mb-6 mt-3" />
-
-                                    <p class="text-[#aaa] leading-relaxed text-[14px] mb-4">
-                                        {c.originLore.intro}{" "}
-                                        <span
-                                            class="glitch-text font-mono text-[var(--accent)] text-[12px]"
-                                            data-text={c.originLore.glitchWord}
-                                        >
-                                            {c.originLore.glitchWord}
-                                        </span>
-                                    </p>
-
-                                    <p class="font-mono text-[12px] tracking-widest mb-2">
-                                        <span
-                                            class="glitch-text text-[var(--accent)]"
-                                            data-text={c.originLore.corrupted}
-                                        >
-                                            {c.originLore.corrupted}
-                                        </span>
-                                    </p>
-                                    <p class="font-mono text-[#aaa] text-[11px] tracking-wider">
-                                        {c.originLore.note}
-                                    </p>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                ))
-            }
-        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
     </main>
 </Layout>
+
+<style>
+    /* Intro slides in line by line */
+    .intro-line {
+        opacity: 0;
+        transform: translateY(14px);
+        animation: rise 0.6s ease-out var(--d) forwards;
+    }
+    @keyframes rise {
+        to { opacity: 1; transform: none; }
+    }
+
+    .caret {
+        color: var(--accent);
+        animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+        50% { opacity: 0; }
+    }
+
+    /* Folder tabs above the ID card */
+    .file-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        padding: 10px 22px 8px;
+        border: 2px solid var(--c);
+        border-bottom: none;
+        background: #0a0a0a;
+        color: var(--c);
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, padding 0.15s;
+    }
+    .file-tab:hover {
+        background: color-mix(in srgb, var(--c) 15%, #0a0a0a);
+    }
+    .file-tab[aria-selected="true"] {
+        background: var(--c);
+        color: black;
+        padding-top: 14px;
+    }
+
+    .dossier-panel {
+        animation: panelIn 0.4s ease-out;
+    }
+    @keyframes panelIn {
+        from { opacity: 0; transform: translateY(8px); }
+    }
+
+    /* Photo frame: corner brackets + a slow scanning line */
+    .scan-frame img {
+        filter: saturate(1.05) contrast(1.05);
+    }
+    .scan-frame::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+        pointer-events: none;
+    }
+    .scan-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 35%, transparent), transparent);
+        animation: scan 4s linear infinite;
+        pointer-events: none;
+    }
+    @keyframes scan {
+        from { top: -40px; }
+        to { top: 100%; }
+    }
+    .corner {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border: 3px solid var(--accent);
+        z-index: 1;
+    }
+    .corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+    .corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+    .corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+    .corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+    /* Section headings: index number + title on one line */
+    .section-title {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        margin-bottom: 32px;
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: white;
+    }
+    .section-title span {
+        font-family: monospace;
+        font-size: 0.875rem;
+        color: var(--accent);
+        padding: 2px 8px;
+        border: 2px solid var(--accent);
+        transform: translateY(-4px);
+    }
+
+    /* Colour swatches grow on hover */
+    .swatch {
+        transition: flex-grow 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+        cursor: copy;
+    }
+    .swatch:hover,
+    .swatch:focus-visible {
+        flex-grow: 1.6;
+        outline: none;
+    }
+    .swatch.copied .swatch-hex {
+        color: #4ade80;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .intro-line,
+        .dossier-panel {
+            opacity: 1;
+            transform: none;
+            animation: none;
+        }
+        .scan-line,
+        .caret {
+            animation: none;
+        }
+        .swatch {
+            transition: none;
+        }
+    }
+</style>
 
 <script>
     import { getStoredTheme, setStoredTheme } from "../lib/theme";
@@ -525,17 +462,14 @@ const characters = [
     const GLITCH_CHARS = "!@#$%^&*<>?/\\|[]{}~`ABCDEFabcdef0123456789";
 
     function scramble(text: string, tick: number) {
+        const glitchChance = tick % 8 === 0 ? 0.9 : 0.4;
         return text
             .split("")
-            .map((ch) => {
-                if (ch === " ") return " ";
-                const glitchChance = tick % 8 === 0 ? 0.9 : 0.4;
-                return Math.random() < glitchChance
-                    ? GLITCH_CHARS[
-                          Math.floor(Math.random() * GLITCH_CHARS.length)
-                      ]
-                    : ch;
-            })
+            .map((ch) =>
+                ch !== " " && Math.random() < glitchChance
+                    ? GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+                    : ch,
+            )
             .join("");
     }
 
@@ -543,38 +477,22 @@ const characters = [
         document.querySelectorAll<HTMLElement>(".glitch-text").forEach((el) => {
             if (el.dataset.glitchBound) return;
             el.dataset.glitchBound = "true";
-
             const text = el.dataset.text ?? el.textContent ?? "";
             let tick = 0;
-            setInterval(() => {
-                tick++;
-                el.textContent = scramble(text, tick);
+            const timer = setInterval(() => {
+                if (!el.isConnected) return clearInterval(timer);
+                el.textContent = scramble(text, ++tick);
             }, 80);
         });
     }
 
     function setupTabs() {
-        const buttons =
-            document.querySelectorAll<HTMLButtonElement>("[data-tab-btn]");
-        const panels =
-            document.querySelectorAll<HTMLElement>("[data-tab-panel]");
+        const buttons = document.querySelectorAll<HTMLButtonElement>("[data-tab-btn]");
+        const panels = document.querySelectorAll<HTMLElement>("[data-tab-panel]");
 
         function activate(id: string | undefined) {
-            buttons.forEach((btn) => {
-                const isActive = btn.dataset.tabBtn === id;
-                btn.classList.toggle("bg-[var(--accent)]", isActive);
-                btn.classList.toggle("text-black", isActive);
-                btn.classList.toggle(
-                    "shadow-[inset_0_-4px_0_var(--shadow)]",
-                    isActive,
-                );
-                btn.classList.toggle("bg-transparent", !isActive);
-                btn.classList.toggle("text-[var(--accent)]", !isActive);
-                btn.setAttribute("aria-selected", String(isActive));
-            });
-            panels.forEach((panel) => {
-                panel.classList.toggle("hidden", panel.dataset.tabPanel !== id);
-            });
+            buttons.forEach((btn) => btn.setAttribute("aria-selected", String(btn.dataset.tabBtn === id)));
+            panels.forEach((panel) => panel.classList.toggle("hidden", panel.dataset.tabPanel !== id));
         }
 
         buttons.forEach((btn) => {
@@ -583,17 +501,41 @@ const characters = [
             btn.addEventListener("click", () => {
                 const id = btn.dataset.tabBtn;
                 activate(id);
-                if (id === "mars" || id === "lynix") {
-                    setStoredTheme(id);
-                }
+                if (id === "mars" || id === "lynix") setStoredTheme(id);
             });
         });
 
         activate(getStoredTheme());
     }
 
-    setupGlitchText();
-    setupTabs();
-    document.addEventListener("astro:after-swap", setupGlitchText);
-    document.addEventListener("astro:after-swap", setupTabs);
+    function setupSwatches() {
+        document.querySelectorAll<HTMLButtonElement>(".swatch").forEach((swatch) => {
+            if (swatch.dataset.bound) return;
+            swatch.dataset.bound = "true";
+            const hexEl = swatch.querySelector<HTMLElement>(".swatch-hex")!;
+            const hex = swatch.dataset.hex!;
+            swatch.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(hex);
+                } catch {
+                    return;
+                }
+                hexEl.firstChild!.textContent = "Copied!";
+                swatch.classList.add("copied");
+                setTimeout(() => {
+                    hexEl.firstChild!.textContent = hex;
+                    swatch.classList.remove("copied");
+                }, 1200);
+            });
+        });
+    }
+
+    function setup() {
+        setupGlitchText();
+        setupTabs();
+        setupSwatches();
+    }
+
+    setup();
+    document.addEventListener("astro:after-swap", setup);
 </script>

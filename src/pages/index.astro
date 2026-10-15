@@ -1,160 +1,69 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ProfileAvatar from "../components/ProfileAvatar.astro";
-import CityBackground from "../components/CityBackground.astro";
-import MarsEasterEgg from "../components/MarsEasterEgg.astro";
-import { MessagesSquare, PawPrint, CalendarClock } from "@lucide/astro";
+import { MessagesSquare, PawPrint } from "@lucide/astro";
+
+const buttonBase =
+    "inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)] hover:translate-x-0.5 hover:translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1";
 ---
 
 <Layout transparentNav>
-    <main
-        class="relative min-h-[calc(100vh-4rem-2px)] flex flex-col justify-between overflow-hidden"
-    >
-        {
-            /* Animated city scene — fixed so it fills the navbar area too */
-        }
-        <CityBackground />
-        <MarsEasterEgg />
-        {/* Darkening so the text stays readable over the scene */}
-        <div
-            class="fixed inset-0 -z-10 bg-gradient-to-b from-black/40 via-transparent to-black/60"
-        >
-        </div>
-        <div
-            class="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_55%_60%_at_25%_88%,rgba(0,0,0,0.75)_0%,rgba(0,0,0,0.45)_50%,transparent_100%)]"
-        >
-        </div>
+    <main class="relative z-10 min-h-[calc(100vh-4rem-2px)] flex flex-col justify-center">
+        <div class="w-full max-w-3xl mx-auto px-6 lg:px-8 py-14 text-center">
+            <div class="anim-fade" style="animation-delay: 0.2s">
+                <ProfileAvatar />
+            </div>
 
-        {/* Bottom Hero Content */}
-        <div
-            class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 pb-14 sm:pb-16 mt-auto"
-        >
-            <div class="flex flex-col sm:flex-row sm:items-start gap-6 sm:gap-8">
-                {/* Picture — bottom-left */}
-                <div class="anim-fade shrink-0" style="animation-delay: 0.2s">
-                    <ProfileAvatar />
+            <h1
+                class="anim-fade text-5xl sm:text-7xl font-extrabold tracking-tight leading-none"
+                style="animation-delay: 0.3s"
+            >
+                Hey, I'm <span class="text-[var(--accent)]" data-theme-name>Mars</span>!
+            </h1>
+
+            <p
+                class="anim-fade glow-text mt-6 text-base sm:text-xl font-extrabold tracking-[0.12em] uppercase"
+                style="animation-delay: 0.4s"
+            >
+                I'm Driven by Curiosity, Fueled by Passion
+            </p>
+
+            <p
+                class="anim-fade max-w-xl mx-auto mt-6 text-[#e5e5e5] leading-relaxed"
+                style="animation-delay: 0.5s"
+            >
+                <span data-theme-text data-mars="Spotted hyena" data-lynix="Cosmic wolf">Spotted hyena</span> from Toronto! Loves adventuring,
+                cybersecurity & IT, and VR. Huge space and aviation
+                nerd!
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                <div class="anim-button" style="animation-delay: 0.6s">
+                    <a
+                        href="/socials"
+                        class:list={[buttonBase, "bg-[var(--accent)] text-black border-[var(--accent-shadow)]"]}
+                    >
+                        <MessagesSquare size={20} />
+                        Contact Me
+                    </a>
                 </div>
-
-                {/* Text */}
-                <div class="flex-1 min-w-0">
-                    <h1
-                        class="anim-fade relative text-5xl sm:text-7xl ml:0 md:-ml-1.5 font-extrabold tracking-tight leading-none"
-                        style="animation-delay: 0.3s"
+                <div class="anim-button" style="animation-delay: 0.75s">
+                    <a
+                        href="/about"
+                        class:list={[buttonBase, "bg-transparent text-white border-[var(--accent)]"]}
                     >
-                        Hey, I'm <span class="text-[var(--accent)]" data-theme-name>Mars</span>!
-                    </h1>
-
-                    <p
-                        class="anim-fade glow-text relative mt-6 text-base sm:text-xl font-extrabold tracking-[0.12em] uppercase"
-                        style="animation-delay: 0.4s"
-                    >
-                        I'm Driven by Curiosity, Fueled by Passion 
-                    </p>
-
-                    <p
-                        class="anim-fade relative max-w-xl mt-6 pl-4 border-l-4 border-[var(--accent)] text-[#e5e5e5] leading-relaxed"
-                        style="animation-delay: 0.5s"
-                    >
-                        <span data-theme-text data-mars="Spotted hyena" data-lynix="Cosmic wolf">Spotted hyena</span> from Toronto! Loves adventuring,
-                        cybersecurity & IT, and VR. Huge space and aviation
-                        nerd!
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
-                        <div class="anim-button" style="animation-delay: 0.6s">
-                            <a
-                                href="/socials"
-                                class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
-                bg-[var(--accent)] text-black border-[var(--accent-shadow)]
-                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
-                hover:translate-x-0.5 hover:translate-y-0.5
-                active:shadow-none active:translate-x-1 active:translate-y-1"
-                            >
-                                <MessagesSquare size={20} />
-                                Contact Me
-                            </a>
-                        </div>
-                        <div class="anim-button" style="animation-delay: 0.75s">
-                            <a
-                                href="/about"
-                                class="inline-flex items-center gap-2 font-bold py-3 px-6 border-2 transition-all duration-100 cursor-pointer select-none
-                bg-transparent text-white border-[var(--accent)]
-                shadow-[4px_4px_0_var(--accent-shadow)] hover:shadow-[2px_2px_0_var(--accent-shadow)]
-                hover:translate-x-0.5 hover:translate-y-0.5
-                active:shadow-none active:translate-x-1 active:translate-y-1"
-                            >
-                                <PawPrint size={20} />
-                                My Fursona
-                            </a>
-                        </div>
-                    </div>
+                        <PawPrint size={20} />
+                        My Fursona
+                    </a>
                 </div>
             </div>
         </div>
 
-        {/* Small Version Text at the bottom right */}
-        <div
-            class="text-[11px] text-[#888] fixed bottom-2 right-4 z-10 text-right leading-tight"
-        >
-            <p><strong>v3.3.1-nebula</strong></p>
-        </div>
+        <p class="text-[15px] text-[#888] fixed bottom-2 right-4 z-10">
+            <strong>v4.0.1-earthbound+dev</strong>
+        </p>
     </main>
 </Layout>
-
-<script>
-    function getUpcomingFriday(): Date {
-        const now = new Date();
-        const target = new Date(now);
-        const dayOfWeek = now.getDay();
-        
-        // Friday is day 5
-        let daysUntil = (5 - dayOfWeek + 7) % 7;
-        
-        target.setDate(now.getDate() + daysUntil);
-        target.setHours(0, 0, 0, 0); // Friday 00:00:00
-
-        // If today is Friday and past 00:00, target next week's Friday
-        if (target.getTime() <= now.getTime()) {
-            target.setDate(target.getDate() + 7);
-        }
-        return target;
-    }
-
-    function initCountdown() {
-        const display = document.getElementById("event-countdown");
-        if (!display) return;
-
-        const target = getUpcomingFriday();
-
-        function update() {
-            const now = new Date().getTime();
-            const diff = target.getTime() - now;
-
-            if (diff <= 0) {
-                if (display) display.textContent = "NOW LIVE";
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / (1000 * 60)) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
-
-            const pad = (n: number) => n.toString().padStart(2, "0");
-            
-            if (display) {
-                display.textContent = `${days}D ${pad(hours)}H ${pad(minutes)}M ${pad(seconds)}S`;
-            }
-        }
-
-        update();
-        setInterval(update, 1000);
-    }
-
-    // Handles initial load and Astro View Transitions
-    document.addEventListener("DOMContentLoaded", initCountdown);
-    document.addEventListener("astro:page-load", initCountdown);
-</script>
 
 <style>
     .anim-fade {
@@ -163,115 +72,57 @@ import { MessagesSquare, PawPrint, CalendarClock } from "@lucide/astro";
         animation: fadeIn 0.5s ease-out forwards;
     }
 
-    /* Neon sign on its last legs: a softer glow that flickers and cuts out at random */
-    .glow-text {
-        color: var(--accent);
-        filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.95))
-            drop-shadow(0 0 14px rgba(0, 0, 0, 0.85));
-        text-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.9),
-            0 0 3px var(--accent),
-            0 0 10px var(--accent-shadow);
-        animation: neonFlicker 7s linear 0.2s infinite;
-    }
-
-    @keyframes neonFlicker {
-        0%,
-        4%,
-        8%,
-        10%,
-        22%,
-        46%,
-        49%,
-        52%,
-        70%,
-        88%,
-        92%,
-        100% {
-            opacity: 1;
-            text-shadow:
-                0 1px 2px rgba(0, 0, 0, 0.9),
-                0 0 3px var(--accent),
-                0 0 10px var(--accent-shadow);
-        }
-        2%,
-        6%,
-        9%,
-        47%,
-        50%,
-        90% {
-            opacity: 0.5;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-        }
-        3%,
-        21%,
-        51%,
-        89%,
-        91% {
-            opacity: 0.75;
-            text-shadow:
-                0 1px 2px rgba(0, 0, 0, 0.9),
-                0 0 2px var(--accent-shadow);
-        }
-        23%,
-        71% {
-            opacity: 0.88;
-            text-shadow:
-                0 1px 2px rgba(0, 0, 0, 0.9),
-                0 0 2px var(--accent);
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .glow-text {
-            opacity: 1;
-            animation: none;
-        }
-    }
-
-    /* Amber LED look, matching the destination sign on the streetcars */
-    .route-sign {
-        color: #ffb020;
-        border: 1px solid rgba(255, 176, 32, 0.5);
-        box-shadow: 3px 3px 0 rgba(255, 176, 32, 0.25);
-        text-shadow: 0 0 6px rgba(255, 176, 32, 0.6);
-    }
-
-    .route-dot {
-        width: 6px;
-        height: 6px;
-        background: #ffb020;
-        box-shadow: 0 0 6px #ffb020;
-        animation: routeBlink 1.6s steps(1) infinite;
-    }
-
-    @keyframes routeBlink {
-        50% {
-            opacity: 0.15;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .route-dot {
-            animation: none;
-        }
-    }
-
     .anim-button {
         opacity: 0;
         transform: translateY(16px);
         animation: fadeUp 0.5s ease-out forwards;
     }
 
-    @keyframes fadeIn {
-        to {
+    /* Neon sign on its last legs: a softer glow that flickers and cuts out at random */
+    .glow-text {
+        color: var(--accent);
+        text-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.9),
+            0 0 3px var(--accent),
+            0 0 10px var(--accent-shadow);
+        animation: neonFlicker 7s linear infinite;
+    }
+
+    @keyframes neonFlicker {
+        0%, 4%, 8%, 10%, 22%, 46%, 49%, 52%, 70%, 88%, 92%, 100% {
             opacity: 1;
+            text-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.9),
+                0 0 3px var(--accent),
+                0 0 10px var(--accent-shadow);
+        }
+        2%, 6%, 9%, 47%, 50%, 90% {
+            opacity: 0.5;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+        }
+        3%, 21%, 51%, 89%, 91% {
+            opacity: 0.75;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 2px var(--accent-shadow);
+        }
+        23%, 71% {
+            opacity: 0.88;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 2px var(--accent);
         }
     }
 
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
     @keyframes fadeUp {
-        to {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .anim-fade, .anim-button, .glow-text {
             opacity: 1;
+            transform: none;
+            animation: none;
         }
     }
 </style>
