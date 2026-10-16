@@ -14,7 +14,7 @@ photos:
   - src: ./5.JPG
   - src: ./city.JPG
 tags: ["sidequests", "city", "toronto"]
-draft: true # drafts only show up in `npm run dev`, never on the live site
+draft: false # true = only shows up in `npm run dev`, never on the live site
 ---
 
 Sometimes the best parts of the city only show up when the pace finally slows down. 
