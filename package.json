@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-types": "wrangler types"
+    "generate-types": "wrangler types",
+    "fix-photos": "node scripts/fix-photo-rotation.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.6",
