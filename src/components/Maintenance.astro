@@ -1,0 +1,38 @@
+---
+/** Full-page maintenance screen. Shown on every page while MAINTENANCE is on in Layout.astro. */
+import { Wrench } from "@lucide/astro";
+---
+
+<main class="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
+    <div class="maint-card w-full max-w-xl bg-[#0a0a0a] p-8 sm:p-10 text-center">
+        <div class="maint-icon mx-auto mb-6 flex items-center justify-center w-16 h-16">
+            <Wrench size={30} />
+        </div>
+
+        <p class="text-[11px] sm:text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--accent)] mb-3">
+            Under maintenance
+        </p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white leading-snug">
+            marsyeen.com is temporarily unavailable
+        </h1>
+        <p class="mt-5 text-[#bbb] text-sm sm:text-base leading-relaxed">
+            The site is down for maintenance. Check back soon!
+        </p>
+    </div>
+</main>
+
+<style>
+    .maint-card {
+        border: 2px solid var(--accent);
+        box-shadow:
+            6px 6px 0 var(--accent-shadow),
+            0 0 40px rgba(var(--accent-rgb), 0.15);
+    }
+
+    .maint-icon {
+        color: var(--accent);
+        border: 2px solid var(--accent);
+        background: rgba(var(--accent-rgb), 0.12);
+        box-shadow: 3px 3px 0 var(--accent-shadow);
+    }
+</style>

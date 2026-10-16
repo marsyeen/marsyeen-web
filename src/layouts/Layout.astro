@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro'
 import StarBackground from '../components/StarBackground.astro'
 import Loader from '../components/Loader.astro'
 import SiteBanner from '../components/SiteBanner.astro'
+import Maintenance from '../components/Maintenance.astro'
 import { ClientRouter } from 'astro:transitions'
 
 import orbitron400 from '@fontsource/orbitron/files/orbitron-latin-400-normal.woff2?url'
@@ -14,6 +15,9 @@ interface Props {
 	title?: string;
 	transparentNav?: boolean;
 }
+
+// Site-wide maintenance switch: when true, every page renders the maintenance screen instead of its content.
+const MAINTENANCE = true;
 
 const { title, transparentNav = false } = Astro.props;
 ---
@@ -29,15 +33,22 @@ const { title, transparentNav = false } = Astro.props;
 		<link rel="preload" as="font" type="font/woff2" href={orbitron600} crossorigin />
 		<link rel="preload" as="font" type="font/woff2" href={orbitron700} crossorigin />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<title>{MAINTENANCE ? 'Down for maintenance' : title}</title>
+		{MAINTENANCE && <meta name="robots" content="noindex" />}
 		<ClientRouter />
 	</head>
 	<body class="min-h-screen flex flex-col text-white">
 		<Loader />
 		<StarBackground />
-		<Navbar transparent={transparentNav} />
-		<SiteBanner floating={transparentNav} />
-		<slot />
+		{MAINTENANCE ? (
+			<Maintenance />
+		) : (
+			<>
+				<Navbar transparent={transparentNav} />
+				<SiteBanner floating={transparentNav} />
+				<slot />
+			</>
+		)}
 
 		<script>
 			import { initTheme } from '../lib/theme';
