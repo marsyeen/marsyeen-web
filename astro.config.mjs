@@ -15,5 +15,7 @@ export default defineConfig({
     css: { postcss: { plugins: [] } }
   },
 
-  adapter: cloudflare()
+  // 'compile' resizes images at build time into plain static files, so they work on a static
+  // Cloudflare Pages deploy (the default needs a live Cloudflare Images binding to serve /_image)
+  adapter: cloudflare({ imageService: 'compile' })
 });
