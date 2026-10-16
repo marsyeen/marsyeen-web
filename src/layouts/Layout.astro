@@ -3,6 +3,7 @@ import '../styles/global.css'
 import Navbar from '../components/Navbar.astro'
 import StarBackground from '../components/StarBackground.astro'
 import Loader from '../components/Loader.astro'
+import SiteBanner from '../components/SiteBanner.astro'
 import { ClientRouter } from 'astro:transitions'
 
 import orbitron400 from '@fontsource/orbitron/files/orbitron-latin-400-normal.woff2?url'
@@ -35,6 +36,7 @@ const { title, transparentNav = false } = Astro.props;
 		<Loader />
 		<StarBackground />
 		<Navbar transparent={transparentNav} />
+		<SiteBanner floating={transparentNav} />
 		<slot />
 
 		<script>

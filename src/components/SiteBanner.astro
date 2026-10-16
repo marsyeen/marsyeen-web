@@ -1,0 +1,36 @@
+---
+/** Site-wide announcement strip shown directly under the navbar. */
+import { TriangleAlert } from "@lucide/astro";
+
+interface Props {
+    /** Render as a floating card instead of a full-width bar (for pages with a transparent navbar). */
+    floating?: boolean;
+}
+
+const { floating = false } = Astro.props;
+---
+
+<div
+    class:list={[
+        "site-banner relative z-40 bg-[#0a0a0a]",
+        floating
+            ? "mx-6 lg:mx-auto lg:max-w-4xl mt-2 border-2 border-[#f59e0b] shadow-[4px_4px_0_#78350f]"
+            : "border-b-2 border-[#f59e0b]",
+    ]}
+    role="status"
+>
+    <div class:list={["flex items-start sm:items-center gap-3 py-3", floating ? "px-5" : "max-w-6xl mx-auto px-6 lg:px-8"]}>
+        <TriangleAlert size={18} class="shrink-0 text-[#fbbf24] mt-0.5 sm:mt-0" />
+        <p class="text-[12px] sm:text-[13px] leading-relaxed text-[#e5e5e5]">
+            Thank you to everyone reaching out about my Instagram account being disabled or showing as a
+            deleted user. I'm working through the process of trying to recover it, as it's where I share my
+            adventures. Let's hope it gets recovered :3
+        </p>
+    </div>
+</div>
+
+<style>
+    .site-banner {
+        background-image: linear-gradient(90deg, rgba(245, 158, 11, 0.16), rgba(245, 158, 11, 0.04) 60%, transparent);
+    }
+</style>
