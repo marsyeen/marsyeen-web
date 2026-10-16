@@ -20,3 +20,7 @@ draft: false # true = only shows up in `npm run dev`, never on the live site
 Sometimes the best parts of the city only show up when the pace finally slows down. 
 
 ### Having the right pepole in your life matters, surround yourself with positivity
+
+<div class="story-video">
+<video src="https://media.marsyeen.com/media.mp4" controls playsinline preload="metadata"></video>
+</div>
