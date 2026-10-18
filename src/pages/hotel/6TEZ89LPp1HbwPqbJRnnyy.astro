@@ -2,6 +2,9 @@
 // Furnal Equinox 2027 roommate application. Stays live while the rest of the site is in maintenance.
 import Layout from "../../layouts/Layout.astro";
 import Notice from "../../components/Notice.astro";
+
+// Set to false to reopen applications.
+const FULL = true;
 ---
 
 <Layout title="FE 2027 Room Application" ignoreMaintenance>
@@ -10,14 +13,25 @@ import Notice from "../../components/Notice.astro";
       <header>
         <div class="eyebrow">Furnal Equinox 2027 · Hotel room Application</div>
         <h1>Room with Mars</h1>
-        <p class="lede">I have 1 spot open in my room for FE 2027. Fill this out so I can get to know you and make sure we'd be comfy rooming together. Nothing here is a trick question, just be honest!</p>
+        <p class="lede">{FULL
+          ? "My room for FE 2027 is full. Thanks to everyone who applied!"
+          : "I have 1 spot open in my room for FE 2027. Fill this out so I can get to know you and make sure we'd be comfy rooming together. Nothing here is a trick question, just be honest!"}</p>
       </header>
 
-      <Notice type="info" title="Why this form exists">
-        This form is here to help with accessibility needs, both mine and yours. Your answers help me make
-        sure everyone in the room is comfortable and gets what they need, so please share anything that
-        would help.
-      </Notice>
+      {FULL && (
+        <Notice type="error" title="Room is full for now!">
+          All the spots are taken, so applications are closed. If a spot opens up again I'll reopen
+          this form, so check back later or keep an eye on my socials.
+        </Notice>
+      )}
+
+      {!FULL && (
+        <Notice type="info" title="Why this form exists">
+          This form is here to help with accessibility needs, both mine and yours. Your answers help me make
+          sure everyone in the room is comfortable and gets what they need, so please share anything that
+          would help.
+        </Notice>
+      )}
 
       <Notice type="warning" title="Heads up: I'm a fullsuiter">
         Fullsuiting is exhausting, so I need the room to be quiet when I'm resting and recharging.
@@ -43,8 +57,8 @@ import Notice from "../../components/Notice.astro";
         </div>
         <div class="kc-cell">
           <div class="kc-label">Spots left</div>
-          <div class="kc-value">1 open</div>
-          <div class="pips" aria-hidden="true"><span class="pip taken"></span><span class="pip taken"></span><span class="pip taken"></span><span class="pip open"></span></div>
+          <div class="kc-value">{FULL ? "Full" : "1 open"}</div>
+          <div class="pips" aria-hidden="true"><span class="pip taken"></span><span class="pip taken"></span><span class="pip taken"></span><span class:list={["pip", FULL ? "taken" : "open"]}></span></div>
         </div>
         <div class="kc-cell kc-price">
           <div class="kc-label">Price per spot</div>
@@ -53,6 +67,8 @@ import Notice from "../../components/Notice.astro";
         </div>
       </section>
     
+      {!FULL && (
+        <>
       <form id="app" novalidate>
         <fieldset>
           <legend><span class="step">01</span><h2>About you</h2></legend>
@@ -299,6 +315,8 @@ import Notice from "../../components/Notice.astro";
       </section>
     
       <p class="footnote">Spots are first come, first served once I've said yes. Your answers are only seen by me.</p>
+        </>
+      )}
     </div>
   </main>
 </Layout>
