@@ -18,8 +18,7 @@ interface Props {
 	ignoreMaintenance?: boolean;
 }
 
-// Site-wide maintenance switch: when true, every page renders the maintenance screen instead of its content.
-const MAINTENANCE = true;
+const MAINTENANCE = false;
 
 const { title, transparentNav = false, ignoreMaintenance = false } = Astro.props;
 const down = MAINTENANCE && !ignoreMaintenance;
