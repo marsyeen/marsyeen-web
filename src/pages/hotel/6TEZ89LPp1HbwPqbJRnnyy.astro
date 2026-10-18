@@ -1,0 +1,589 @@
+---
+// Furnal Equinox 2027 roommate application. Stays live while the rest of the site is in maintenance.
+import Layout from "../../layouts/Layout.astro";
+import Notice from "../../components/Notice.astro";
+---
+
+<Layout title="FE 2027 Room Application" ignoreMaintenance>
+  <main class="fe-room flex-1 relative z-10">
+    <div class="wrap max-w-3xl mx-auto px-6 lg:px-8 py-16">
+      <header>
+        <div class="eyebrow">Furnal Equinox 2027 · Hotel room Application</div>
+        <h1>Room with Mars</h1>
+        <p class="lede">I have spots open in my room for FE 2027. Fill this out so I can get to know you and make sure we'd be comfy rooming together. Nothing here is a trick question, just be honest!</p>
+      </header>
+
+      <Notice type="info" title="Why this form exists">
+        This form is here to help with accessibility needs, both mine and yours. Your answers help me make
+        sure everyone in the room is comfortable and gets what they need, so please share anything that
+        would help.
+      </Notice>
+
+      <Notice type="warning" title="Heads up: I'm a fullsuiter">
+        Fullsuiting is exhausting, so I need the room to be quiet when I'm resting and recharging.
+        Suiting up and unsuiting also takes extra room and space, so please be OK with me taking over
+        a corner for my suit, a drying fan, and some time to get in and out of it.
+      </Notice>
+    
+      <section class="keycard" aria-label="Room details">
+        <div class="kc-cell">
+          <div class="kc-label">Check-in</div>
+          <div class="kc-value">Feb 13, 2027</div>
+          <div class="kc-sub">Saturday</div>
+        </div>
+        <div class="kc-cell">
+          <div class="kc-label">Check-out</div>
+          <div class="kc-value">Feb 16, 2027</div>
+          <div class="kc-sub">Tuesday · 3 nights</div>
+        </div>
+        <div class="kc-cell">
+          <div class="kc-label">Room type</div>
+          <div class="kc-value" style="font-size:14px">Traditional Guest Room</div>
+          <div class="kc-sub">2 Queen beds</div>
+        </div>
+        <div class="kc-cell">
+          <div class="kc-label">Spots left</div>
+          <div class="kc-value">2 open</div>
+          <div class="pips" aria-hidden="true"><span class="pip taken"></span><span class="pip taken"></span><span class="pip open"></span><span class="pip open"></span></div>
+        </div>
+        <div class="kc-cell kc-price">
+          <div class="kc-label">Price per spot</div>
+          <div class="kc-value">$268.60</div>
+          <div class="kc-sub">For the full stay</div>
+        </div>
+      </section>
+    
+      <form id="app" novalidate>
+        <fieldset>
+          <legend><span class="step">01</span><h2>About you</h2></legend>
+          <div class="grid2">
+            <div class="field" data-req>
+              <label for="name">Name or nickname<span class="req">*</span></label>
+              <input type="text" id="name" name="Name" autocomplete="nickname">
+              <span class="err-msg">Tell me what to call you.</span>
+            </div>
+            <div class="field">
+              <label for="pronouns">Pronouns</label>
+              <input type="text" id="pronouns" name="Pronouns">
+            </div>
+            <div class="field" data-req>
+              <label for="telegram">Telegram or Discord<span class="req">*</span></label>
+              <input type="text" id="telegram" name="Contact" placeholder="@handle">
+              <span class="err-msg">I need a way to reach you.</span>
+            </div>
+            <div class="field">
+              <label for="socials">Other socials</label>
+              <input type="text" id="socials" name="Other socials" placeholder="Bluesky, X, etc.">
+            </div>
+          </div>
+          <div class="field" data-req data-group="adult">
+            <span class="q" id="q-adult">Are you 18 or older?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-adult">
+              <label class="choice"><input type="radio" name="18+" value="Yes" id="adult-y"><span>Yes</span></label>
+              <label class="choice"><input type="radio" name="18+" value="No" id="adult-n"><span>No</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field" data-req data-group="know">
+            <span class="q" id="q-know">How do we know each other?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-know">
+              <label class="choice"><input type="radio" name="How we know each other" value="Friends IRL" id="know-irl"><span>Friends IRL</span></label>
+              <label class="choice"><input type="radio" name="How we know each other" value="Online friends" id="know-online"><span>Online friends</span></label>
+              <label class="choice"><input type="radio" name="How we know each other" value="Mutual friend" id="know-mutual"><span>Through a mutual</span></label>
+              <label class="choice"><input type="radio" name="How we know each other" value="We haven't met" id="know-none"><span>We haven't met</span></label>
+            </div>
+            <span class="err-msg">Pick the closest one.</span>
+          </div>
+          <div class="field">
+            <label for="mutuals">Mutual friends who can vouch for you</label>
+            <input type="text" id="mutuals" name="Mutuals / references">
+          </div>
+        </fieldset>
+    
+        <fieldset>
+          <legend><span class="step">02</span><h2>Con plans</h2></legend>
+          <div class="field" data-req data-group="badge">
+            <span class="q" id="q-badge">Are you registered for Furnal Equinox 2027?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-badge">
+              <label class="choice"><input type="radio" name="FE badge" value="Registered" id="badge-y"><span>Yes, registered</span></label>
+              <label class="choice"><input type="radio" name="FE badge" value="Planning to" id="badge-plan"><span>Planning to</span></label>
+              <label class="choice"><input type="radio" name="FE badge" value="Not yet" id="badge-n"><span>Not yet</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field" data-req data-group="dates">
+            <span class="q" id="q-dates">Can you stay all 3 nights (Feb 13 to 16)?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-dates">
+              <label class="choice"><input type="radio" name="Full stay" value="Yes, all 3 nights" id="dates-y"><span>Yes, all 3 nights</span></label>
+              <label class="choice"><input type="radio" name="Full stay" value="Arriving late / leaving early" id="dates-n"><span>Arriving late or leaving early</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <label for="arrival">Roughly when do you arrive and leave?</label>
+            <input type="text" id="arrival" name="Arrival / departure times" placeholder="e.g. Sat afternoon, leaving Tue morning">
+          </div>
+          <div class="field" data-req data-group="roomed">
+            <span class="q" id="q-roomed">Have you shared a con hotel room before?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-roomed">
+              <label class="choice"><input type="radio" name="Roomed at a con before" value="Yes, several times" id="roomed-many"><span>Yes, several times</span></label>
+              <label class="choice"><input type="radio" name="Roomed at a con before" value="Once or twice" id="roomed-few"><span>Once or twice</span></label>
+              <label class="choice"><input type="radio" name="Roomed at a con before" value="First time" id="roomed-none"><span>This would be my first</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <label for="suit">Will you be fursuiting?</label>
+            <select id="suit" name="Fursuiting">
+              <option value="">Choose one</option>
+              <option>Full suit</option>
+              <option>Partial</option>
+              <option>Just a head / ears &amp; tail</option>
+              <option>No suit</option>
+            </select>
+            <span class="hint">Suits need drying space and a fan, so I like to plan ahead.</span>
+          </div>
+        </fieldset>
+    
+        <fieldset>
+          <legend><span class="step">03</span><h2>Living together</h2></legend>
+          <div class="field" data-req data-group="bed">
+            <span class="q" id="q-bed">The room has 2 queen beds. Are you OK sharing a bed?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-bed">
+              <label class="choice"><input type="radio" name="Bed sharing" value="Yes" id="bed-y"><span>Yes</span></label>
+              <label class="choice"><input type="radio" name="Bed sharing" value="Only with someone I know" id="bed-known"><span>Only with someone I know</span></label>
+              <label class="choice"><input type="radio" name="Bed sharing" value="I'd bring a sleeping bag / air mattress" id="bed-floor"><span>I'd bring a sleeping bag</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field" data-req data-group="sleep">
+            <span class="q" id="q-sleep">What's your sleep schedule like at cons?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-sleep">
+              <label class="choice"><input type="radio" name="Sleep schedule" value="Early bird" id="sleep-early"><span>Early bird</span></label>
+              <label class="choice"><input type="radio" name="Sleep schedule" value="Somewhere in between" id="sleep-mid"><span>In between</span></label>
+              <label class="choice"><input type="radio" name="Sleep schedule" value="Night owl" id="sleep-late"><span>Night owl</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <span class="q" id="q-snore">Do you snore?</span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-snore">
+              <label class="choice"><input type="radio" name="Snores" value="No" id="snore-n"><span>No</span></label>
+              <label class="choice"><input type="radio" name="Snores" value="A little" id="snore-some"><span>A little</span></label>
+              <label class="choice"><input type="radio" name="Snores" value="Yes" id="snore-y"><span>Yes</span></label>
+              <label class="choice"><input type="radio" name="Snores" value="Not sure" id="snore-unk"><span>Not sure</span></label>
+            </div>
+          </div>
+          <div class="field" data-req data-group="tidy">
+            <span class="q" id="q-tidy">How tidy are you in a shared space?<span class="req">*</span></span>
+            <div class="scale" role="radiogroup" aria-labelledby="q-tidy">
+              <label class="choice"><input type="radio" name="Tidiness (1-5)" value="1" id="tidy-1"><span>1</span></label>
+              <label class="choice"><input type="radio" name="Tidiness (1-5)" value="2" id="tidy-2"><span>2</span></label>
+              <label class="choice"><input type="radio" name="Tidiness (1-5)" value="3" id="tidy-3"><span>3</span></label>
+              <label class="choice"><input type="radio" name="Tidiness (1-5)" value="4" id="tidy-4"><span>4</span></label>
+              <label class="choice"><input type="radio" name="Tidiness (1-5)" value="5" id="tidy-5"><span>5</span></label>
+            </div>
+            <div class="scale-ends"><span>Gremlin nest</span><span>Spotless</span></div>
+            <span class="err-msg">Pick a number.</span>
+          </div>
+          <div class="field" data-req data-group="smoke">
+            <span class="q" id="q-smoke">Do you smoke or vape?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-smoke">
+              <label class="choice"><input type="radio" name="Smoke / vape" value="No" id="smoke-n"><span>No</span></label>
+              <label class="choice"><input type="radio" name="Smoke / vape" value="Yes, outside only" id="smoke-out"><span>Yes, outside only</span></label>
+            </div>
+            <span class="hint">The room is non-smoking, so no smoking or vaping inside.</span>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <span class="q" id="q-drink">Do you drink?</span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-drink">
+              <label class="choice"><input type="radio" name="Drinks" value="No" id="drink-n"><span>No</span></label>
+              <label class="choice"><input type="radio" name="Drinks" value="Socially" id="drink-some"><span>Socially</span></label>
+              <label class="choice"><input type="radio" name="Drinks" value="Yes, I party" id="drink-y"><span>Yes, I party</span></label>
+            </div>
+          </div>
+          <div class="field" data-req data-group="guests">
+            <span class="q" id="q-guests">Would you want to bring guests back to the room?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-guests">
+              <label class="choice"><input type="radio" name="Guests in room" value="No" id="guests-n"><span>No</span></label>
+              <label class="choice"><input type="radio" name="Guests in room" value="Sometimes, and I'd ask first" id="guests-ask"><span>Sometimes, and I'd ask first</span></label>
+            </div>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <label for="allergies">Allergies, medical needs, or anything we should know</label>
+            <textarea id="allergies" name="Allergies / needs" placeholder="Pet or scent allergies, CPAP machine, dietary needs, etc."></textarea>
+          </div>
+        </fieldset>
+    
+        <fieldset>
+          <legend><span class="step">04</span><h2>Payment</h2></legend>
+          <div class="field" data-req data-group="pay">
+            <span class="q" id="q-pay">Can you pay your $268.60 share before the con?<span class="req">*</span></span>
+            <div class="choices" role="radiogroup" aria-labelledby="q-pay">
+              <label class="choice"><input type="radio" name="Can pay share" value="Yes, all at once" id="pay-full"><span>Yes, all at once</span></label>
+              <label class="choice"><input type="radio" name="Can pay share" value="I'd need to split it into payments" id="pay-split"><span>I'd need to split it</span></label>
+            </div>
+            <span class="hint">Your share must be paid in full before I hand out keycards.</span>
+            <span class="err-msg">Please answer this one.</span>
+          </div>
+          <div class="field">
+            <label for="method">How would you pay?</label>
+            <select id="method" name="Payment method">
+              <option value="">Choose one</option>
+              <option>Interac e-Transfer</option>
+              <option>PayPal</option>
+              <option>Cash at check-in</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </fieldset>
+    
+        <fieldset>
+          <legend><span class="step">05</span><h2>Last bits</h2></legend>
+          <div class="field">
+            <label for="why">Tell me a bit about yourself and why you'd be a good roommate</label>
+            <textarea id="why" name="About me"></textarea>
+          </div>
+          <div class="field">
+            <label for="questions">Anything you want to ask me?</label>
+            <textarea id="questions" name="Questions for Mars"></textarea>
+          </div>
+          <div class="field" data-req data-group="agree1">
+            <label class="check"><input type="checkbox" id="agree1" name="Agrees: payment" value="Yes"><span>I understand that if I drop out after paying, I need to find a replacement or my share isn't refunded.<span class="req">*</span></span></label>
+            <span class="err-msg">Please confirm this.</span>
+          </div>
+          <div class="field" data-req data-group="agree-keycard">
+            <label class="check"><input type="checkbox" id="agree-keycard" name="Agrees: paid in full before keycard" value="Yes"><span>I understand my share must be paid in full before I get a keycard.<span class="req">*</span></span></label>
+            <span class="err-msg">Please confirm this.</span>
+          </div>
+          <div class="field" data-req data-group="agree2">
+            <label class="check"><input type="checkbox" id="agree2" name="Agrees: room respect" value="Yes"><span>I'll respect everyone's space, sleep, and belongings, and keep the room drama-free.<span class="req">*</span></span></label>
+            <span class="err-msg">Please confirm this.</span>
+          </div>
+        </fieldset>
+    
+        <!-- Honeypot: hidden from people, bots tend to fill it in -->
+        <div class="hp" aria-hidden="true">
+          <label for="hp-website">Website</label>
+          <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn" id="submit">Send application</button>
+          <span class="form-err" id="form-err" hidden></span>
+        </div>
+      </form>
+    
+      <section class="review sent" id="sent" hidden aria-live="polite">
+        <h2>Application sent!</h2>
+        <p>Thanks! I got your application and I'll message you on Telegram or Discord once I've looked it over.</p>
+      </section>
+
+      <section class="review fallback" id="review" hidden aria-live="polite">
+        <h2>Couldn't send it automatically</h2>
+        <p class="fallback-why" id="fallback-why"></p>
+        <p>No worries, you can still apply by sending it to me directly:</p>
+        <ol>
+          <li>Copy your application with the button below.</li>
+          <li>Send it to me on Telegram at <span class="handle">@marsyeen</span> (<a href="https://t.me/marsyeen" target="_blank" rel="noopener noreferrer">open Telegram</a>).</li>
+          <li>I'll get back to you once I've looked it over.</li>
+        </ol>
+        <pre id="summary"></pre>
+        <div class="actions">
+          <button type="button" class="btn" id="copy">Copy application</button>
+          <button type="button" class="btn ghost" id="edit">Edit answers</button>
+          <span class="copied" id="copied" hidden>Copied!</span>
+        </div>
+      </section>
+    
+      <p class="footnote">Spots are first come, first served once I've said yes. Your answers are only seen by me.</p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* Page-local palette; accent comes from the site theme (Mars orange / Lynix purple). */
+  .fe-room {
+    --panel: #0a0a0a;
+    --bg-field: #050505;
+    --line: #333;
+    --fg: #f3f3f3;
+    --muted: #999;
+    --ok: #4ade80;
+    --err: #f87171;
+    --warn: #fbbf24;
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .fe-room .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: clamp(26px, 6vw, 40px); line-height: 1.1; margin: 8px 0 12px; text-wrap: balance; }
+  h2 { font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; margin: 0; text-wrap: balance; }
+  .lede { color: var(--muted); max-width: 60ch; margin: 0; }
+
+  /* Room keycard */
+  .keycard {
+    border: 2px solid var(--accent);
+    background: var(--panel);
+    box-shadow: 6px 6px 0 var(--accent-shadow);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .kc-cell { padding: 16px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); min-width: 0; }
+  .kc-label { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .kc-value { font-size: 16px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kc-sub { font-size: 13px; color: var(--muted); }
+  .kc-price .kc-value { color: var(--accent); font-size: 22px; }
+  .pips { display: flex; gap: 6px; margin-top: 8px; }
+  .pip { width: 22px; height: 10px; border: 2px solid var(--accent); }
+  .pip.taken { background: var(--line); border-color: var(--line); }
+  .pip.open { background: var(--accent); box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.6); }
+
+  /* Form */
+  form { display: flex; flex-direction: column; gap: 24px; }
+  fieldset { border: 2px solid var(--line); background: var(--panel); margin: 0; padding: 22px 20px 24px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  legend { padding: 0; float: left; width: 100%; display: flex; align-items: baseline; gap: 12px; }
+  legend + * { clear: both; }
+  .step { font-size: 12px; color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  label, .q { font-weight: 600; font-size: 15px; }
+  .req { color: var(--accent); margin-left: 2px; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: -2px; }
+  input[type=text], input[type=number], input[type=email], select, textarea {
+    font: inherit;
+    color: var(--fg);
+    background: var(--bg-field);
+    border: 2px solid var(--line);
+    padding: 10px 12px;
+    width: 100%;
+    border-radius: 0;
+  }
+  textarea { min-height: 88px; resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .choice input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice { position: relative; }
+  .choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .choice span {
+    display: inline-block; padding: 8px 14px; border: 2px solid var(--line); background: var(--bg-field);
+    font-size: 14px; font-weight: 500; cursor: pointer; transition: border-color 120ms, color 120ms;
+  }
+  .choice input:checked + span { border-color: var(--accent); color: var(--accent); background: rgba(var(--accent-rgb), 0.08); }
+  .choice:hover span { border-color: var(--muted); }
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .scale .choice span { width: 100%; text-align: center; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .check { display: flex; gap: 12px; align-items: flex-start; font-weight: 500; font-size: 15px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+  .invalid input[type=text], .invalid input[type=number], .invalid select, .invalid textarea { border-color: var(--err); }
+  .invalid .choice span { border-color: rgba(248, 113, 113, 0.6); }
+  .err-msg { color: var(--err); font-size: 13px; display: none; }
+  .invalid .err-msg { display: block; }
+
+  .btn {
+    font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 14px 24px; border: 2px solid var(--accent); background: var(--accent); color: #000; cursor: pointer;
+    box-shadow: 4px 4px 0 var(--accent-shadow); transition: transform 100ms, box-shadow 100ms;
+  }
+  .btn:hover { transform: translate(1px, 1px); box-shadow: 3px 3px 0 var(--accent-shadow); }
+  .btn:active { transform: translate(4px, 4px); box-shadow: none; }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .form-err { color: var(--err); font-size: 14px; }
+
+  /* Review */
+  .review { border: 2px solid var(--ok); background: var(--panel); padding: 22px 20px; display: flex; flex-direction: column; gap: 16px; }
+  .review h2 { color: var(--ok); }
+  .review p { margin: 0; }
+  .review.fallback { border-color: var(--warn); }
+  .review.fallback h2 { color: var(--warn); }
+  .fallback-why { color: var(--muted); font-size: 14px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+  .review ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .handle { color: var(--accent); user-select: all; }
+  pre {
+    margin: 0; background: var(--bg-field); border: 2px solid var(--line); padding: 14px; font-size: 13px; line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word; max-height: 360px; overflow: auto; font-family: ui-monospace, Consolas, monospace;
+  }
+  .copied { color: var(--ok); font-size: 14px; }
+  a { color: var(--accent); }
+  .footnote { font-size: 13px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<script>
+
+function setupRoomForm() {
+  const form = document.getElementById('app');
+  if (!form || form.dataset.ready) return;
+  form.dataset.ready = '1';
+  const review = document.getElementById('review');
+  const summary = document.getElementById('summary');
+  const formErr = document.getElementById('form-err');
+  const sent = document.getElementById('sent');
+  const submitBtn = document.getElementById('submit');
+  const KEY = 'fe27-room-draft';
+  const API_URL = import.meta.env.PUBLIC_API_URL ?? 'https://api.marsyeen.com';
+
+  // Restore an unsent draft
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+    for (const [id, v] of Object.entries(saved)) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      if (el.type === 'radio' || el.type === 'checkbox') el.checked = v;
+      else el.value = v;
+    }
+  } catch (e) {}
+
+  form.addEventListener('input', (e) => {
+    const f = e.target.closest('.field');
+    if (f) f.classList.remove('invalid');
+    try {
+      const data = {};
+      form.querySelectorAll('input, select, textarea').forEach((el) => {
+        data[el.id] = (el.type === 'radio' || el.type === 'checkbox') ? el.checked : el.value;
+      });
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {}
+  });
+
+  function isFilled(field) {
+    const boxes = field.querySelectorAll('input[type=radio], input[type=checkbox]');
+    if (boxes.length) return [...boxes].some((b) => b.checked);
+    const el = field.querySelector('input, select, textarea');
+    return el && el.value.trim() !== '';
+  }
+
+  // Answers in form order, one entry per question (radio groups collapsed).
+  function collectAnswers() {
+    const out = [];
+    form.querySelectorAll('fieldset').forEach((fs) => {
+      const seen = new Set();
+      fs.querySelectorAll('input, select, textarea').forEach((el) => {
+        if (seen.has(el.name)) return;
+        seen.add(el.name);
+        let v;
+        if (el.type === 'radio') {
+          const c = fs.querySelector(`input[name="${CSS.escape(el.name)}"]:checked`);
+          v = c ? c.value : '';
+        } else if (el.type === 'checkbox') {
+          v = el.checked ? 'Yes' : '';
+        } else {
+          v = el.value.trim();
+        }
+        out.push({ section: fs.querySelector('h2').textContent, question: el.name, answer: v });
+      });
+    });
+    return out;
+  }
+
+  function showFallback(reason) {
+    document.getElementById('fallback-why').textContent = reason;
+    summary.textContent = buildSummary();
+    review.hidden = false;
+    document.getElementById('copied').hidden = true;
+    review.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function buildSummary() {
+    const lines = ['FE 2027 ROOM APPLICATION', 'Feb 13 to 16, 2027 · Traditional Guest Room, 2 Queen · $268.60/spot'];
+    let section = '';
+    for (const a of collectAnswers()) {
+      if (a.section !== section) {
+        section = a.section;
+        lines.push('', '== ' + section.toUpperCase() + ' ==');
+      }
+      lines.push(`${a.question}: ${a.answer || '-'}`);
+    }
+    return lines.join('\n');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let firstBad = null;
+    form.querySelectorAll('[data-req]').forEach((f) => {
+      const ok = isFilled(f);
+      f.classList.toggle('invalid', !ok);
+      if (!ok && !firstBad) firstBad = f;
+    });
+    if (firstBad) {
+      formErr.textContent = 'A few required questions still need an answer.';
+      formErr.hidden = false;
+      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const focusable = firstBad.querySelector('input, select, textarea');
+      if (focusable) focusable.focus({ preventScroll: true });
+      return;
+    }
+    formErr.hidden = true;
+    review.hidden = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const res = await fetch(`${API_URL}/v1/room-applications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room: 'fe2027',
+          name: document.getElementById('name').value,
+          contact: document.getElementById('telegram').value,
+          answers: collectAnswers().map(({ question, answer }) => ({ question, answer: answer || '-' })),
+          website: document.getElementById('hp-website').value,
+        }),
+      });
+      if (res.ok) {
+        form.hidden = true;
+        sent.hidden = false;
+        sent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { localStorage.removeItem(KEY); } catch (e) {}
+        return;
+      }
+      const body = await res.json().catch(() => ({}));
+      showFallback(body.error || `The server answered with an error (${res.status}).`);
+    } catch (err) {
+      showFallback("The application server couldn't be reached.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send application';
+    }
+  });
+
+  document.getElementById('copy').addEventListener('click', () => {
+    const done = () => { document.getElementById('copied').hidden = false; };
+    const fallback = () => {
+      const r = document.createRange();
+      r.selectNodeContents(summary);
+      const s = getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      document.getElementById('copied').textContent = 'Selected, press Ctrl+C / Cmd+C to copy';
+      done();
+    };
+    try {
+      navigator.clipboard.writeText(summary.textContent).then(() => {
+        document.getElementById('copied').textContent = 'Copied!';
+        done();
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  document.getElementById('edit').addEventListener('click', () => {
+    review.hidden = true;
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+document.addEventListener('astro:page-load', setupRoomForm);
+</script>

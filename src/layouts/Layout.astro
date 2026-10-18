@@ -14,12 +14,15 @@ import orbitron700 from '@fontsource/orbitron/files/orbitron-latin-700-normal.wo
 interface Props {
 	title?: string;
 	transparentNav?: boolean;
+	/** Keep this page reachable while MAINTENANCE is on (shown with the navbar but no site banner). */
+	ignoreMaintenance?: boolean;
 }
 
 // Site-wide maintenance switch: when true, every page renders the maintenance screen instead of its content.
 const MAINTENANCE = true;
 
-const { title, transparentNav = false } = Astro.props;
+const { title, transparentNav = false, ignoreMaintenance = false } = Astro.props;
+const down = MAINTENANCE && !ignoreMaintenance;
 ---
 
 <!doctype html>
@@ -33,15 +36,20 @@ const { title, transparentNav = false } = Astro.props;
 		<link rel="preload" as="font" type="font/woff2" href={orbitron600} crossorigin />
 		<link rel="preload" as="font" type="font/woff2" href={orbitron700} crossorigin />
 		<meta name="generator" content={Astro.generator} />
-		<title>{MAINTENANCE ? 'Down for maintenance' : title}</title>
-		{MAINTENANCE && <meta name="robots" content="noindex" />}
+		<title>{down ? 'Down for maintenance' : title}</title>
+		{down && <meta name="robots" content="noindex" />}
 		<ClientRouter />
 	</head>
 	<body class="min-h-screen flex flex-col text-white">
 		<Loader />
 		<StarBackground />
-		{MAINTENANCE ? (
+		{down ? (
 			<Maintenance />
+		) : MAINTENANCE ? (
+			<>
+				<Navbar transparent={transparentNav} />
+				<slot />
+			</>
 		) : (
 			<>
 				<Navbar transparent={transparentNav} />
